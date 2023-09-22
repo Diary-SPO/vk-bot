@@ -12,11 +12,11 @@
   "dependencies": {
     "@vk-io/session": "^2.2.1",
     "dotenv": "^16.0.3",
-    "nodemon": "^2.0.22",
+    "nodemon": "^3.0.1",
     "vk-io": "^4.8.3"
   },
   "devDependencies": {
-    "@types/node": "^18.16.2",
+    "@types/node": "^20.6.3",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
     "eslint": "^8.0.1",
     "eslint-config-standard-with-typescript": "^39.0.0",
