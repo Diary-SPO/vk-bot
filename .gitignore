@@ -1,0 +1,12 @@
+node_modules
+.idea
+
+.env
+
+built/*
+dist/*
+
+**/.vs
+**/.vscode/*
+
+*.js

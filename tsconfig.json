@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "dist",
+    "lib": ["ESNext"],
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strictNullChecks": true,
+    "esModuleInterop": true,
+    "target": "ES6",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@config": ["src/config"]
+    }
+  },
+  "include": ["./**/*.ts",
+    ".eslintrc.cjs"
+  ],
+  "exclude": ["node_modules"]
+}
