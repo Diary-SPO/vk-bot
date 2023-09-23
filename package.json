@@ -1,24 +1,15 @@
 {
   "name": "vk-bot",
-  "version": "1.0.0",
-  "description": "vk bot for diary spo",
-  "main": "main.ts",
+  "module": "main.ts",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon --ext ts,json --exec \"ts-node -r tsconfig-paths/register main.ts\"",
-    "lint:fix": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix"
-  },
-  "author": "zamelane",
-  "license": "MIT",
-  "dependencies": {
-    "@vk-io/session": "^2.2.1",
-    "dotenv": "^16.0.3",
-    "nodemon": "^3.0.1",
-    "vk-io": "^4.8.3"
+    "dev": "bun --watch run main.ts",
+    "lint:fix": "eslint . --ext ts --fix"
   },
   "devDependencies": {
     "@types/node": "^20.6.3",
     "@typescript-eslint/eslint-plugin": "^6.4.0",
-    "eslint": "^8.0.1",
+    "eslint": "latest",
     "eslint-config-standard-with-typescript": "^39.0.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
@@ -26,6 +17,12 @@
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.8.6",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "*"
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@vk-io/hear": "^1.1.1",
+    "@vk-io/session": "^2.2.1",
+    "bun-types": "latest",
+    "vk-io": "^4.8.3"
   }
 }
