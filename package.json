@@ -23,6 +23,7 @@
     "@vk-io/hear": "^1.1.1",
     "@vk-io/session": "^2.2.1",
     "bun-types": "latest",
+    "diary-shared": "^1.7.2",
     "vk-io": "^4.8.3"
   }
 }

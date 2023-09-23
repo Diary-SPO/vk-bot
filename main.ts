@@ -1,6 +1,7 @@
 import { VK } from 'vk-io'
-import { TOKEN } from '@config'
+import { LOGIN, PASSWORD, TOKEN } from '@config'
 import { HearManager } from '@vk-io/hear'
+import handleLogin from '@src/api/login.ts'
 
 const vk = new VK({
   token: TOKEN,
@@ -23,9 +24,19 @@ hearManager.hear(
 )
 
 async function run (): Promise<void> {
-  const response = await vk.api.wall.get({
-    owner_id: 1
-  })
+  // const response = await vk.api.wall.get({
+  //   owner_id: 1
+  // })
+  const login = LOGIN
+  const password = PASSWORD
+
+  const response = handleLogin(login, password)
+    .then((result) => {
+      console.log('Login result:', result)
+    })
+    .catch((error) => {
+      console.error('Error during login:', error)
+    })
 
   console.log(response)
 }
