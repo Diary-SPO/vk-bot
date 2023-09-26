@@ -7,23 +7,25 @@
     "lint:fix": "eslint . --ext ts --fix"
   },
   "devDependencies": {
-    "@types/node": "^20.6.3",
-    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@types/node": "^20.7.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
     "eslint": "latest",
-    "eslint-config-standard-with-typescript": "^39.0.0",
+    "eslint-config-standard-with-typescript": "^39.1.0",
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
     "eslint-plugin-promise": "^6.0.0",
     "ts-node": "^10.9.1",
     "tsc-alias": "^1.8.6",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "colors": "^1.4.0",
+    "bun-types": "latest",
+    "diary-shared": "^1.7.2"
   },
   "dependencies": {
-    "@vk-io/hear": "^1.1.1",
+    "@vk-io/scenes": "^1.2.1",
     "@vk-io/session": "^2.2.1",
-    "bun-types": "latest",
-    "diary-shared": "^1.7.2",
+    "mongoose": "^7.5.2",
     "vk-io": "^4.8.3"
   }
 }

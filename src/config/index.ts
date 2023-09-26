@@ -1,3 +1,9 @@
+import fs from 'fs'
+
+if (!fs.existsSync('.env')) {
+  console.log('Отсутствует .env файл...')
+  process.exit()
+}
+
 export const TOKEN = Bun.env?.TOKEN ?? ''
-export const LOGIN = Bun.env?.TEST_LOGIN ?? ''
-export const PASSWORD = Bun.env?.TEST_PASSWORD ?? ''
+export const LIMIT = Bun.env?.LIMIT ?? 20
