@@ -18,7 +18,7 @@ const scenesHandler = (context: CustomContext): void => {
   const isAuth = false
 
   if (!isAuth) {
-    context.scene.enter('registration')
+    context.scene.enter('login')
   } else {
     context.scene.enter('home')
   }

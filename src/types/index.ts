@@ -1,3 +1,5 @@
+import { type Headers } from 'node-fetch'
+
 export interface CustomContext {
   subTypes: string
   id: number
@@ -9,3 +11,11 @@ export interface CustomContext {
 }
 
 export type CustomNext = () => void
+
+export type HTTPMethods = 'GET' | 'POST'
+
+export interface ApiResponse<T> {
+  data: T
+  headers: Headers
+  status: number
+}
