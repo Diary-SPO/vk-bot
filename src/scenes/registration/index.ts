@@ -46,6 +46,7 @@ export default new StepScene('registration', [
             if (fio.length == 2 && fio[1].length == 2) {
                 await context.send('Логин принят ✅')
                 context.scene.state.login = text;
+                return context.scene.step.next();
             } else {
                 await context.send('❗ Вы ввели неверный логин')
                 await context.send('⛱ Пример правильного ввода: familiya-io')
