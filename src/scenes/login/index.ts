@@ -1,9 +1,9 @@
 import Hashes from 'jshashes'
-import registration from '@src/dblogic/registration.ts'
+import auth from '@src/dblogic/login'
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
 
-export default new StepScene('registration', [
+export default new StepScene('login', [
   async (context: MessageContext) => {
     const firstTime = context.scene.step.firstTime
     const text = context.text
@@ -47,7 +47,7 @@ export default new StepScene('registration', [
       payload: { command: 'goHome' },
       color: Keyboard.SECONDARY_COLOR
     }).oneTime()
-    if (context?.messagePayload?.command == 'goHome') return await context.scene.step.previous()
+    if (context?.messagePayload?.command === 'goHome') return context.scene.step.previous()
 
     // Проверяем логин
     if (!context.scene.state.login && firstTime) {
@@ -76,10 +76,10 @@ export default new StepScene('registration', [
       payload: { command: 'editLogin' },
       color: Keyboard.SECONDARY_COLOR
     }).oneTime()
-    if (context?.messagePayload?.command == 'editLogin') {
+    if (context?.messagePayload?.command === 'editLogin') {
       context.scene.state.login = undefined
       context.scene.state.password = undefined
-      return await context.scene.step.previous()
+      return context.scene.step.previous()
     }
 
     // Проверяем пароль
@@ -111,32 +111,34 @@ export default new StepScene('registration', [
       }).inline()
 
     if (context?.messagePayload?.command === 'rewriteAuthData') {
+      // FIXME: временно
+      return
+    }
 
-    } else {
-      const message = await context.send('😼 Авторизирую...')
-      const password = (new Hashes.SHA256()).b64(context.scene.state.password)
-      const login = context.scene.state.login
+    const message = await context.send('😼 Авторизирую...')
+    const password = (new Hashes.SHA256()).b64(context.scene.state.password)
+    const login = context.scene.state.login
 
-      const res = await registration(login, password)
+    const res = await auth(login, password)
 
-      switch (res) {
-        case 1: {
-          await message.editMessage({ message: 'Произошла неизвестная ошибка...', keyboard: retryKeyboard })
-          return
-        } break
-        case 401: {
-          await message.editMessage({ message: 'Неверный Логин или Пароль!' })
-          context.scene.state.login = undefined
-          context.scene.state.password = undefined
-          context.scene.step.go(1); return
-        } break
-        case 501: {
-          await message.editMessage({ message: 'Сервер дневника упал...', keyboard: retryKeyboard })
-        } break
-        default: {
-          // Успешная авторизация
-          await message.editMessage({ message: 'Успешный вход, но надо подрубить базу...' })
-        } break
+    switch (res) {
+      case 1: {
+        await message.editMessage({ message: 'Произошла неизвестная ошибка...', keyboard: retryKeyboard })
+        return
+      }
+      case 401: {
+        await message.editMessage({ message: 'Неверный Логин или Пароль!' })
+        context.scene.state.login = undefined
+        context.scene.state.password = undefined
+        await context.scene.step.go(1)
+        return
+      }
+      case 501: {
+        await message.editMessage({ message: 'Сервер дневника упал...', keyboard: retryKeyboard })
+        return
+      }
+      default: {
+        await message.editMessage({ message: 'Успешный вход, но надо подрубить базу...' })
       }
     }
   }

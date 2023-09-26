@@ -1,18 +1,27 @@
 import fetch from 'node-fetch'
-// import { type AuthData } from 'diary-shared'
+import { type ApiResponse, type HTTPMethods } from '@types'
 
-// TODO: Типизировать ответ от функции
-export default async (url: string, body: any) => {
+export default async function auth<T> (
+  url: string,
+  method: HTTPMethods = 'GET',
+  body: any
+): Promise<ApiResponse<T> | number> {
   try {
     const response = await fetch(url, {
-      method: 'POST',
+      method,
       body,
       headers: { 'Content-Type': 'application/json;charset=UTF-8' }
     })
 
-    if (!response.ok) return 401
+    if (!response.ok) {
+      return 401
+    }
 
-    return response
+    return {
+      data: await response.json() as T,
+      headers: response.headers,
+      status: response.status
+    }
   } catch (error) {
     return 501
   }
