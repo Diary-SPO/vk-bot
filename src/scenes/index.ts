@@ -6,7 +6,7 @@ const logger = (context: CustomContext, next: CustomNext): void => {
     ? 'edit '
     : 'write') + `(messageId: ${context.id})`
 
-  const text = `[${context.senderId}]\t${type}=> `
+  const text = `[${context.senderId > 0 ? ' ' : ''}${context.senderId}]\t${type}=> `
   console.log(c.magenta(`[${new Date().toUTCString()}]\t`), context.senderId < 0
     ? c.red(text)
     : c.green(text), context.text)
