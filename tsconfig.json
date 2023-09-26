@@ -24,10 +24,13 @@
     ],
     "paths": {
       "@src/*": ["src/*"],
-      "@config": ["src/config"]
+      "@config": ["src/config"],
+      "@types": ["src/types"],
     }
   },
-  "include": ["./**/*.ts",
+  "include": [
+    "./src/**/*",
+    "./**/*.ts",
     ".eslintrc.cjs"
   ],
   "exclude": ["node_modules"]

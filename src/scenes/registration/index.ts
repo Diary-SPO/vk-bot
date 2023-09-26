@@ -1,40 +1,43 @@
 import { StepScene } from '@vk-io/scenes'
-import { Context, Keyboard, MessageContext } from 'vk-io'
+import { Keyboard, type MessageContext } from 'vk-io'
 
 export default new StepScene('registration', [
-  async (context) => {
+  async (context: MessageContext) => {
     const firstTime = context.scene.step.firstTime
     const text = context.text
+
     if (firstTime || !text) {
       await context.send('😺 Ого, ты здесь впервые ?')
       await context.send('😨 Для начала нужно авторизироваться.')
     }
+
     if (context.messagePayload) {
       switch (context.messagePayload.command) {
         case 'auth': { await context.scene.step.next(); return }
         case 'info_bot': await context.send('Тут должно быть инфо о боте...')
       }
     }
-    await context.send(
-      {
-        message: 'Вот основные комманды:',
-        keyboard: Keyboard.builder().textButton({
-          label: 'Авторизация',
+
+    await context.send({
+      message: 'Вот основные комманды:',
+      keyboard: Keyboard.builder().textButton({
+        label: 'Авторизация',
+        payload: {
+          command: 'auth'
+        },
+        color: Keyboard.PRIMARY_COLOR
+      }).row()
+        .textButton({
+          label: 'Информация о боте',
           payload: {
-            command: 'auth'
+            command: 'info_bot'
           },
-          color: Keyboard.PRIMARY_COLOR
-        }).row()
-          .textButton({
-            label: 'Информация о боте',
-            payload: {
-              command: 'info_bot'
-            },
-            color: Keyboard.SECONDARY_COLOR
-          }).oneTime()
-      })
+          color: Keyboard.SECONDARY_COLOR
+        }).oneTime()
+    })
   },
-  async (context) => {
+
+  async (context: MessageContext) => {
     const firstTime = context.scene.step.firstTime
     const text = context.text ?? ''
 

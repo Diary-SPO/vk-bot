@@ -1,4 +1,4 @@
-import vk from '@src/init/bot.ts'
+import vk from '@src/init/bot'
 import c from 'colors'
 
 vk.updates.start().catch(console.error)
