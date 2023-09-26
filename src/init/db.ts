@@ -1,5 +1,5 @@
 // Вот тут нужно инициализировать БД
-/*import mongoose from "mongoose";
+/* import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
@@ -18,4 +18,4 @@ const UserVK = mongoose.model("userVK", new Schema({
 
 await mongoose.connect("mongodb://192.168.0.112:27017/bot");
 
-export default () => {};*/
+export default () => {}; */

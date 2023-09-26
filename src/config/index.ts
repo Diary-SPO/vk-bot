@@ -1,8 +1,8 @@
 import fs from 'fs'
 
 if (!fs.existsSync('.env')) {
-    console.log('Отсутствует .env файл...');
-    process.exit();
+  console.log('Отсутствует .env файл...')
+  process.exit()
 }
 
 export const TOKEN = Bun.env?.TOKEN ?? ''
