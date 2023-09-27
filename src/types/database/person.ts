@@ -3,7 +3,6 @@ export interface person {
   groupId: number // id группы
   login: string // Логин
   password: string // Пароль
-  passwordHashed: string // Пароль, подготовленный к отправке
   phone: string // Номер телефона
   birthday: string // Дата рождения
   firstName: string // Имя
