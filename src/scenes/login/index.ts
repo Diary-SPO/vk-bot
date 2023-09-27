@@ -1,5 +1,5 @@
-import Hashes from 'jshashes'
 import auth from '@src/dblogic/login'
+import { person } from '@src/types/database/person'
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
 
@@ -21,7 +21,7 @@ export default new StepScene('login', [
     }
 
     await context.send({
-      message: 'Вот основные комманды:',
+      message: 'Вот основные команды:',
       keyboard: Keyboard.builder().textButton({
         label: 'Авторизация',
         payload: {
@@ -53,14 +53,14 @@ export default new StepScene('login', [
     if (!context.scene.state.login && firstTime) {
       await context.send({ message: '👤 Введите Логин:', keyboard })
     } else if (!context.scene.state.login) {
-      const fio = text.split('-')
-      if (fio.length === 2 && fio[1].length === 2) {
+      //const fio = text.split('-')
+      if (text.length >= 5 && text.length <= 20) {
         await context.send('Логин принят ✅')
         context.scene.state.login = text
         await context.scene.step.next()
       } else {
         await context.send('❗ Вы ввели неверный логин')
-        await context.send('⛱ Пример правильного ввода: familiya-io')
+        await context.send('⛱ Логин должен быть от 5 до 20 символов')
         await context.send({ message: '👤 Повторите попытку:', keyboard })
       }
     }
@@ -116,10 +116,10 @@ export default new StepScene('login', [
     }
 
     const message = await context.send('😼 Авторизирую...')
-    const password = (new Hashes.SHA256()).b64(context.scene.state.password)
+    const password = context.scene.state.password
     const login = context.scene.state.login
 
-    const res = await auth(login, password)
+    const res = await auth(login, password, context.senderId)
 
     switch (res) {
       case 1: {
@@ -138,7 +138,11 @@ export default new StepScene('login', [
         return
       }
       default: {
-        await message.editMessage({ message: 'Успешный вход, но надо подрубить базу...' })
+        const user = res as person
+        context.scene.state.isAuth = true
+        context.scene.state.dnevnikUser = user
+        await message.editMessage({ message: `🙃 Привет, ${user.firstName}! Ты успешно авторизирован.`})
+        context.scene.enter('home');
       }
     }
   }
