@@ -20,11 +20,43 @@ export default new StepScene('home', [
         `\n👉 ${date.getUTCDate()} лет` +
         `\n📱 ${user.phone}`
         )
-      }
+      } break;
+      case 'group': {
+        context.send(`Скоро будет...`)
+      } break;
+      case 'statistic': {
+        context.send(`Скоро будет...`)
+      } break;
+      case 'schedule': {
+        context.send(`Скоро будет...`)
+      } break;
+      case 'marks': {
+        context.send(`Скоро будет...`)
+      } break;
+      case 'more': {
+        context.send(`Скоро будет...`)
+      } break;
     }
     return await context.send({
       message: '📡 Меню: ',
       keyboard: Keyboard.builder().textButton({
+        label: '📅 Расписание',
+        payload: {
+          command: 'schedule'
+        }
+      }).row().textButton(
+        {
+          label: '📂 Больше',
+          payload: {
+            command: 'more'
+          }
+        }
+      ).textButton({
+        label: '🔢 Оценки',
+        payload: {
+          command: 'marks'
+        }
+      }).row().textButton({
         label: '📊',
         payload: {
           command: 'statistic'
