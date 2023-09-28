@@ -29,7 +29,11 @@ To do this, create a **.env** file and specify the main parameters in it:
 | -------------- | ------- | ----------- | -------- |
 | SERVER_URL | https://poo.tomedu.ru/services/security | Address to the services of your diary | Yes |
 | TOKEN | vkq.a.FdSdkdsDfj4ehnEhg... | A token from your community, where the bot will be located | Yes |
-| ENCRYPTED_KEY | MySupperPassTrue | The key for encrypting passwords. Its length should be 16, 24 or 32 characters exactly | No |
+| LIMIT | 20 | Limiting api requests | NO |
+| ENCRYPTED_KEY | MySupperPassTrue | The key for encrypting passwords. Its length should be 16, 24 or 32 characters exactly | YES |
+| DATABASE_HOST | 192.168.0.112 | Database host | YES |
+| DATABASE_PORT | 27017 | Database port | YES |
+| DATABASE_NAME | bot | Database name | YES |
 
 Example of a correctly filled file:
 
