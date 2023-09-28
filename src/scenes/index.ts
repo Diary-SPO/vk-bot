@@ -1,6 +1,7 @@
 import c from 'colors'
 import { type CustomContext, type CustomNext } from '@types'
 import auth from '@src/dblogic/auth.ts'
+import contexter from '@src/dblogic/contexter'
 
 const logger = (context: CustomContext, next: CustomNext): void => {
   const type = (context.subTypes === 'message_edit'
@@ -18,6 +19,7 @@ const logger = (context: CustomContext, next: CustomNext): void => {
 const scenesHandler = async (context: CustomContext): Promise<void> => {
 
   const isAuth = await auth(context)
+  contexter.save(context)
 
   if (!isAuth) {
     context.scene.enter('login')

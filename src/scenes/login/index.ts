@@ -2,9 +2,11 @@ import auth from '@src/dblogic/login'
 import { person } from '@src/types/database/person'
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
+import contexter from '@src/dblogic/contexter'
 
 export default new StepScene('login', [
   async (context: MessageContext) => {
+    contexter.restore(context)
     const firstTime = context.scene.step.firstTime
     const text = context.text
 
@@ -141,6 +143,7 @@ export default new StepScene('login', [
         const user = res as person
         context.scene.state.isAuth = true
         context.scene.state.dnevnikUser = user
+        contexter.save(context)
         await message.editMessage({ message: `🙃 Привет, ${user.firstName}! Ты успешно авторизирован.`})
         context.scene.enter('home');
       }

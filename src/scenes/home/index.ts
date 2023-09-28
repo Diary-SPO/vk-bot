@@ -1,9 +1,11 @@
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
 import { type Person } from '@src/types/database/person'
+import contexter from '@src/dblogic/contexter'
 
 export default new StepScene('home', [
   async (context: MessageContext) => {
+    contexter.restore(context);
     if (context.scene.step.firstTime || !context.text) {
       await context.send('Приветики! Ты в главном меню!')
     }
