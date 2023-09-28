@@ -1,12 +1,12 @@
 import fetcher from '@src/api/fetcher'
 import Hashes from 'jshashes'
 import { UserData, type PersonResponse } from 'diary-shared'
-import { type person } from '@src/types/database/person.ts'
+import { type Person } from '@src/types/database/person.ts'
 import { SERVER_URL } from '@config'
 import { UserDnevnik, UserVK } from '@src/init/db.ts'
 import crypto from '@src/dblogic/crypto.ts'
 
-type UserLogin = person | string | number | null
+type UserLogin = Person | string | number | null
 
 export default async function loginUser (login: string, password: string, vkid: number): Promise<UserLogin> {
   const passwordHashed = (new Hashes.SHA256()).b64(password)
@@ -47,7 +47,7 @@ export default async function loginUser (login: string, password: string, vkid: 
       firstName: detailedInfo.data.person.firstName,
       lastName: detailedInfo.data.person.lastName,
       middleName: detailedInfo.data.person.middleName
-    } as person
+    } as Person
     regData.password = crypto.encrypt(regData?.password ?? '')
 
     if ((await UserDnevnik.find({id: regData.id})).length == 0) {
