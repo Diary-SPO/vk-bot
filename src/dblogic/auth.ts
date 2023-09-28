@@ -1,5 +1,5 @@
-import { UserDnevnik, UserVK } from '@src/init/db.ts'
-import crypto from '@src/dblogic/crypto.ts'
+import { UserDnevnik, UserVK } from '@src/init/db'
+import crypto from '@src/dblogic/crypto'
 
 export default async (context: any) => {
     if (context.scene?.state?.isAuth === true) return true
