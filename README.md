@@ -40,7 +40,11 @@ Example of a correctly filled file:
 ```sh
 SERVER_URL=https://poo.tomedu.ru/services/security
 TOKEN=vkq.a.FdSdkdsDfj4ehnEhg...
-# ENCRYPTED_KEY=OPTIONALE_KEY!!!
+ENCRYPTED_KEY=OPTIONALE_KEY!!!
+DATABASE_HOST=192.168.0.112
+DATABASE_PORT=27017
+DATABASE_NAME=bot
+LIMIT=20
 ```
 
 Your mongodb database should be running on 27017 port. Create a **bot** table with the ***uservks*** table in advance.
