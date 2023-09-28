@@ -1,5 +1,5 @@
 # VK-BOT
-A convenient chatbot for interacting with [poo.tomedu.ru](https://poo.tomedu.ru)'
+A convenient chatbot for interacting with [poo.tomedu.ru](https://poo.tomedu.ru)
 
 **EN**|**[ru](/README_ru.md)**
 
