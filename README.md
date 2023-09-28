@@ -39,7 +39,7 @@ TOKEN=vkq.a.FdSdkdsDfj4ehnEhg...
 # ENCRYPTED_KEY=OPTIONALE_KEY!!!
 ```
 
-Your mongodb database should be running on 192.168.0.112:27017. Create a **bot** table with the ***uservks*** table in advance.
+Your mongodb database should be running on 27017 port. Create a **bot** table with the ***uservks*** table in advance.
 
 Install the dependencies, then start the server.
 
