@@ -14,7 +14,7 @@ A convenient chatbot for interacting with [poo.tomedu.ru](https://poo.tomedu.ru)
 
 ## Installation
 
-Dillinger requires [Bun](https://bun.sh/) latest version.
+This project requires [Bun](https://bun.sh/) latest version.
 
 Clone this repository:
 
@@ -41,7 +41,7 @@ TOKEN=vkq.a.FdSdkdsDfj4ehnEhg...
 
 Your mongodb database should be running on 192.168.0.112:27017. Create a **bot** table with the ***uservks*** table in advance.
 
-Install the dependencies and devDependencies and start the server.
+Install the dependencies, then start the server.
 
 ```sh
 bun install
