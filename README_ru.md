@@ -1,7 +1,7 @@
 # VK-BOT
 Удобный чат-бот для взаимодействия с [poo.tomedu.ru](https://poo.tomedu.ru)
 
-**[en](/README_ru.md)**|**RU**
+**[en](/README.md)**|**RU**
 
 ![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
