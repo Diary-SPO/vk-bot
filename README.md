@@ -37,11 +37,11 @@ To do this, create a **.env** file and specify the main parameters in it:
 
 Example of a correctly filled file:
 
-```sh
+```dotenv
 SERVER_URL=https://poo.tomedu.ru/services/security
 TOKEN=vkq.a.FdSdkdsDfj4ehnEhg...
-ENCRYPTED_KEY=OPTIONALE_KEY!!!
-DATABASE_HOST=192.168.0.112
+ENCRYPTED_KEY='OPTIONALE_KEY!!!'
+DATABASE_HOST=mongodb://localhost:27017
 DATABASE_PORT=27017
 DATABASE_NAME=bot
 LIMIT=20
@@ -53,7 +53,7 @@ Install the dependencies, then start the server.
 
 ```sh
 bun install
-bun .
+bun run --watch main.ts
 ```
 
 ------

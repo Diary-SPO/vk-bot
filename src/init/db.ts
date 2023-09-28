@@ -22,6 +22,6 @@ const UserVK = mongoose.model('uservks', new Schema({
   vkId: Number
 }))
 
-await mongoose.connect(`mongodb://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}`)
+await mongoose.connect(`${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}`)
 
 export { UserVK, UserDnevnik }
