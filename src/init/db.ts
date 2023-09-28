@@ -1,3 +1,4 @@
+import { DATABASE_HOST, DATABASE_PORT, DATABASE_NAME } from '@config'
 // Вот тут нужно инициализировать БД
 import mongoose from 'mongoose'
 
@@ -21,6 +22,6 @@ const UserVK = mongoose.model('uservks', new Schema({
   vkId: Number
 }))
 
-await mongoose.connect('mongodb://192.168.0.112:27017/bot')
+await mongoose.connect(`mongodb://${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}`)
 
 export { UserVK, UserDnevnik }

@@ -15,7 +15,6 @@ export default async function auth<T> (
     })
 
     if (!response.ok) {
-      console.log(response)
       return 401
     }
 

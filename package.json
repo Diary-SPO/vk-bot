@@ -26,6 +26,7 @@
     "@vk-io/scenes": "^1.2.1",
     "@vk-io/session": "^2.2.1",
     "aes-js": "^3.1.2",
+    "dotenv": "^16.3.1",
     "jshashes": "^1.0.8",
     "mongoose": "^7.5.2",
     "vk-io": "^4.8.3"
