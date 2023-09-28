@@ -20,13 +20,12 @@ export default async function loginUser (login: string, password: string, vkid: 
   if (typeof res === 'number') return res
 
   try {
-    // TODO: пофисить ошибку
+    // TODO: пофиксить ошибку
     const student = res.data.tenants[res.data.tenantName].students[0]
 
     const setCookieHeader = res.headers.get('Set-Cookie')
     const cookie = Array.isArray(setCookieHeader) ? setCookieHeader.join('; ') : setCookieHeader
 
-    // TODO: Создать тип PersonResponse
     const detailedInfo = await fetcher<PersonResponse>(
       `${SERVER_URL}/account-settings`,
       'GET',
