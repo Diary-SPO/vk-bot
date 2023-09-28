@@ -6,6 +6,10 @@ export interface CustomContext {
   senderId: number
   text: string
   scene: {
+    state: {
+      isAuth: boolean
+      dnevnikUser: DnevnikUser
+    }
     enter: (sceneName: string) => void
   }
 }
@@ -13,6 +17,19 @@ export interface CustomContext {
 export type CustomNext = () => void
 
 export type HTTPMethods = 'GET' | 'POST'
+
+export interface DnevnikUser {
+  id: number
+  groupId: number
+  login: string
+  password: string
+  passwordHashed: string
+  phone: string
+  birthday: string
+  firstName: string
+  lastName: string
+  middleName: string
+}
 
 export interface ApiResponse<T> {
   data: T

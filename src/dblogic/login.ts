@@ -1,10 +1,10 @@
 import fetcher from '@src/api/fetcher'
 import Hashes from 'jshashes'
-import { UserData, type PersonResponse } from 'diary-shared'
-import { type Person } from '@src/types/database/person.ts'
+import { type UserData } from 'diary-shared'
+import { type Person, type PersonResponse } from '@src/types/database/Person'
 import { SERVER_URL } from '@config'
-import { UserDnevnik, UserVK } from '@src/init/db.ts'
-import crypto from '@src/dblogic/crypto.ts'
+import { UserDnevnik, UserVK } from '@src/init/db'
+import crypto from '@src/dblogic/crypto'
 
 type UserLogin = Person | string | number | null
 
@@ -20,14 +20,13 @@ export default async function loginUser (login: string, password: string, vkid: 
   if (typeof res === 'number') return res
 
   try {
-    // TODO: работа с данными юзера
+    // TODO: пофисить ошибку
     const student = res.data.tenants[res.data.tenantName].students[0]
 
     const setCookieHeader = res.headers.get('Set-Cookie')
     const cookie = Array.isArray(setCookieHeader) ? setCookieHeader.join('; ') : setCookieHeader
 
-    // Запрашиваем подробную инфу
-
+    // TODO: Создать тип PersonResponse
     const detailedInfo = await fetcher<PersonResponse>(
       `${SERVER_URL}/account-settings`,
       'GET',
@@ -37,7 +36,7 @@ export default async function loginUser (login: string, password: string, vkid: 
 
     if (typeof detailedInfo === 'number') return detailedInfo
 
-    const regData = {
+    const regData: Person = {
       id: student.id,
       groupId: student.groupId,
       login,
@@ -47,25 +46,23 @@ export default async function loginUser (login: string, password: string, vkid: 
       firstName: detailedInfo.data.person.firstName,
       lastName: detailedInfo.data.person.lastName,
       middleName: detailedInfo.data.person.middleName
-    } as Person
+    }
     regData.password = crypto.encrypt(regData?.password ?? '')
 
-    if ((await UserDnevnik.find({id: regData.id})).length == 0) {
+    if ((await UserDnevnik.find({ id: regData.id })).length === 0) {
       // Регаем
-      const reg = await (new UserDnevnik(regData)).save()
+      await (new UserDnevnik(regData)).save()
     } else {
-      const reg = await UserDnevnik.updateOne({id: regData.id}, regData)
+      await UserDnevnik.updateOne({ id: regData.id }, regData)
     }
 
-    if ((await UserVK.find({vkId: vkid})).length == 0) {
-      // Регаем
-      const regVK = await (new UserVK({dnevnikId: regData.id, vkId: vkid})).save()
+    if ((await UserVK.find({ vkId: vkid })).length === 0) {
+      await (new UserVK({ dnevnikId: regData.id, vkId: vkid })).save()
     } else {
-      const reg   = await UserDnevnik.updateOne({vkId: vkid}, {dnevnikId: regData.id, vkId: vkid})
+      await UserDnevnik.updateOne({ vkId: vkid }, { dnevnikId: regData.id, vkId: vkid })
     }
 
-    return regData;
-    
+    return regData
   } catch (error) {
     return 1
   }

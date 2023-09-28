@@ -1,5 +1,5 @@
 import auth from '@src/dblogic/login'
-import { person } from '@src/types/database/person'
+import { type Person } from '@src/types/database/Person'
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
 import contexter from '@src/dblogic/contexter'
@@ -55,7 +55,7 @@ export default new StepScene('login', [
     if (!context.scene.state.login && firstTime) {
       await context.send({ message: '👤 Введите Логин:', keyboard })
     } else if (!context.scene.state.login) {
-      //const fio = text.split('-')
+      // const fio = text.split('-')
       if (text.length >= 5 && text.length <= 20) {
         await context.send('Логин принят ✅')
         context.scene.state.login = text
@@ -140,12 +140,12 @@ export default new StepScene('login', [
         return
       }
       default: {
-        const user = res as person
+        const user = res as Person
         context.scene.state.isAuth = true
         context.scene.state.dnevnikUser = user
         contexter.save(context)
-        await message.editMessage({ message: `🙃 Привет, ${user.firstName}! Ты успешно авторизирован.`})
-        context.scene.enter('home');
+        await message.editMessage({ message: `🙃 Привет, ${user.firstName}! Ты успешно авторизирован.` })
+        context.scene.enter('home')
       }
     }
   }

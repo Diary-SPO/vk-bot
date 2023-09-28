@@ -1,23 +1,24 @@
 import { UserDnevnik, UserVK } from '@src/init/db'
 import crypto from '@src/dblogic/crypto'
+import { type CustomContext } from '@types'
 
-export default async (context: any) => {
-    if (context.scene?.state?.isAuth === true) return true
-    
-    const vkid = context.senderId
+export default async (context: CustomContext): Promise<boolean> => {
+  if (context.scene?.state?.isAuth) return true
 
-    const user = (await UserVK.findOne({vkId: vkid}))
+  const vkid = context.senderId
 
-    if (user === null) return false
+  const user = (await UserVK.findOne({ vkId: vkid }))
 
-    const dnevnikUser = (await UserDnevnik.findOne({id: user.dnevnikId}))
+  if (user === null) return false
 
-    if (dnevnikUser === null) return false
+  const dnevnikUser = (await UserDnevnik.findOne({ id: user.dnevnikId }))
 
-    dnevnikUser.password = crypto.decrypt(dnevnikUser?.password ?? '')
+  if (dnevnikUser === null) return false
 
-    context.scene.state.isAuth = true
-    context.scene.state.dnevnikUser = dnevnikUser
+  dnevnikUser.password = crypto.decrypt(dnevnikUser?.password ?? '')
 
-    return true
+  context.scene.state.isAuth = true
+  context.scene.state.dnevnikUser = dnevnikUser
+
+  return true
 }

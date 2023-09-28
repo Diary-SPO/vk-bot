@@ -1,6 +1,6 @@
 import c from 'colors'
 import { type CustomContext, type CustomNext } from '@types'
-import auth from '@src/dblogic/auth.ts'
+import auth from '@src/dblogic/auth'
 import contexter from '@src/dblogic/contexter'
 
 const logger = (context: CustomContext, next: CustomNext): void => {
@@ -17,7 +17,6 @@ const logger = (context: CustomContext, next: CustomNext): void => {
 }
 
 const scenesHandler = async (context: CustomContext): Promise<void> => {
-
   const isAuth = await auth(context)
   contexter.save(context)
 

@@ -1,13 +1,25 @@
-import crypto from 'aes-js'
-import {ENCRYPT_KEY} from '@src/config'
+import crypto from 'crypto'
+import { ENCRYPT_KEY } from '@src/config'
 
 export default {
-    encrypt: (value: string) => {
-        const key = new crypto.ModeOfOperation.ctr(crypto.utils.utf8.toBytes(ENCRYPT_KEY), new crypto.Counter(5))
-        return crypto.utils.hex.fromBytes(key.encrypt(crypto.utils.utf8.toBytes(value)))
-    },
-    decrypt: (value: string) => {
-        const key = new crypto.ModeOfOperation.ctr(crypto.utils.utf8.toBytes(ENCRYPT_KEY), new crypto.Counter(5))
-        return crypto.utils.utf8.fromBytes(key.decrypt(crypto.utils.hex.toBytes(value)))
-    }
+  encrypt: (value: string): string => {
+    const key = Buffer.from(ENCRYPT_KEY, 'utf-8')
+    const iv = Buffer.alloc(16, 0)
+
+    const cipher = crypto.createCipheriv('aes-256-ctr', key, iv)
+    let encryptedValue = cipher.update(value, 'utf-8', 'hex')
+    encryptedValue += cipher.final('hex')
+
+    return encryptedValue
+  },
+  decrypt: (value: string): string => {
+    const key = Buffer.from(ENCRYPT_KEY, 'utf-8')
+    const iv = Buffer.alloc(16, 0)
+
+    const decipher = crypto.createDecipheriv('aes-256-ctr', key, iv)
+    let decryptedValue = decipher.update(value, 'hex', 'utf-8')
+    decryptedValue += decipher.final('utf-8')
+
+    return decryptedValue
+  }
 }

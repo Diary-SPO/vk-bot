@@ -30,8 +30,8 @@
   },
   "include": [
     "./src/**/*",
-    "./**/*.ts",
-    ".eslintrc.cjs"
+    ".eslintrc.cjs",
+    "main.ts"
   ],
   "exclude": ["node_modules"]
 }

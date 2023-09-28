@@ -1,41 +1,46 @@
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
-import { type Person } from '@src/types/database/person'
+import { type Person } from '@src/types/database/Person'
 import contexter from '@src/dblogic/contexter'
 
 export default new StepScene('home', [
   async (context: MessageContext) => {
-    contexter.restore(context);
+    contexter.restore(context)
     if (context.scene.step.firstTime || !context.text) {
       await context.send('Приветики! Ты в главном меню!')
     }
-    
+
     switch (context?.messagePayload?.command) {
       case 'settings': return context.scene.enter('settings')
       case 'profile': {
         const user = context.scene.state.dnevnikUser as Person
         const date = new Date(user.birthday)
-        context.send(
+        await context.send(
           `👤 ${user.lastName} ${user.firstName} ${user.middleName}` +
-        `\n👉 ${date.getUTCDate()} лет` +
-        `\n📱 ${user.phone}`
+          `\n👉 ${date.getUTCDate()} лет` +
+          `\n📱 ${user.phone}`
         )
-      } break;
+      } break
       case 'group': {
-        context.send(`Скоро будет...`)
-      } break;
+        await context.send('Скоро будет...')
+        break
+      }
       case 'statistic': {
-        context.send(`Скоро будет...`)
-      } break;
+        await context.send('Скоро будет...')
+        break
+      }
       case 'schedule': {
-        context.send(`Скоро будет...`)
-      } break;
+        await context.send('Скоро будет...')
+        break
+      }
       case 'marks': {
-        context.send(`Скоро будет...`)
-      } break;
+        await context.send('Скоро будет...')
+        break
+      }
       case 'more': {
-        context.send(`Скоро будет...`)
-      } break;
+        await context.send('Скоро будет...')
+        break
+      }
     }
     return await context.send({
       message: '📡 Меню: ',
