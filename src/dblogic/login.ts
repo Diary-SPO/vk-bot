@@ -10,28 +10,24 @@ type UserLogin = Person | string | number | null
 
 export default async function loginUser (login: string, password: string, vkid: number): Promise<UserLogin> {
   const passwordHashed = (new Hashes.SHA256()).b64(password)
-  const res = await fetcher<UserData>(
-    `${SERVER_URL}/login`,
-    'POST',
-    JSON.stringify({ login, password: passwordHashed, isRemember: true }),
-    ''
-  )
+  const res = await fetcher<UserData>({
+    url: `${SERVER_URL}/login`,
+    method: 'POST',
+    body: JSON.stringify({ login, password: passwordHashed, isRemember: true })
+  })
 
   if (typeof res === 'number') return res
 
   try {
-    // TODO: пофиксить ошибку
     const student = res.data.tenants[res.data.tenantName].students[0]
 
     const setCookieHeader = res.headers.get('Set-Cookie')
     const cookie = Array.isArray(setCookieHeader) ? setCookieHeader.join('; ') : setCookieHeader
 
-    const detailedInfo = await fetcher<PersonResponse>(
-      `${SERVER_URL}/account-settings`,
-      'GET',
-      '',
-      cookie ?? ''
-    )
+    const detailedInfo = await fetcher<PersonResponse>({
+      url: `${SERVER_URL}/account-settings`,
+      cookie: cookie ?? ''
+    })
 
     if (typeof detailedInfo === 'number') return detailedInfo
 
