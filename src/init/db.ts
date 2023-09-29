@@ -4,7 +4,7 @@ import { type DnevnikUser } from '@types'
 
 const Schema = mongoose.Schema
 
-const UserDnevnik = mongoose.model('userdnevniks', new Schema<DnevnikUser>({
+const UserDnevnik = mongoose.model('dnevnikusers', new Schema<DnevnikUser>({
   id: Number, // id профиля
   groupId: Number, // id группы
   login: String, // Логин
@@ -17,7 +17,7 @@ const UserDnevnik = mongoose.model('userdnevniks', new Schema<DnevnikUser>({
   middleName: String // Отчество
 }))
 
-const UserVK = mongoose.model('uservks', new Schema({
+const UserVK = mongoose.model('vkusers', new Schema({
   dnevnikId: Number,
   vkId: Number
 }))
