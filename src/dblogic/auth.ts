@@ -3,7 +3,8 @@ import crypto from '@src/dblogic/crypto'
 import { type CustomContext } from '@types'
 
 export default async (context: CustomContext): Promise<boolean> => {
-  if (context.scene?.state?.isAuth) return true
+  const { session } = context;
+  if (session?.isAuth) return true
 
   const vkid = context.senderId
 
@@ -17,8 +18,8 @@ export default async (context: CustomContext): Promise<boolean> => {
 
   dnevnikUser.password = crypto.decrypt(dnevnikUser?.password ?? '')
 
-  context.scene.state.isAuth = true
-  context.scene.state.dnevnikUser = dnevnikUser
+  session.isAuth = true
+  session.dnevnikUser = dnevnikUser
 
   return true
 }

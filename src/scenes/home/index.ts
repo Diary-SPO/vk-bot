@@ -1,11 +1,10 @@
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
 import { type Person } from '@src/types/database/Person'
-import contexter from '@src/dblogic/contexter'
 
 export default new StepScene('home', [
   async (context: MessageContext) => {
-    contexter.restore(context)
+    const {session} = context
     if (context.scene.step.firstTime || !context.text) {
       await context.send('Приветики! Ты в главном меню!')
     }
@@ -13,7 +12,7 @@ export default new StepScene('home', [
     switch (context?.messagePayload?.command) {
       case 'settings': return context.scene.enter('settings')
       case 'profile': {
-        const user = context.scene.state.dnevnikUser as Person
+        const user = session.dnevnikUser as Person
         const date = new Date(user.birthday)
         await context.send(
           `👤 ${user.lastName} ${user.firstName} ${user.middleName}` +
