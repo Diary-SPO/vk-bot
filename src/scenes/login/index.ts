@@ -100,7 +100,7 @@ export default new StepScene('login', [
     // return context.scene.step.next(); // Выходим из сцены
   },
   async (context: MessageContext) => {
-    const {session} = context
+    const { session } = context
     // const firstTime = context.scene.step.firstTime
     // const text = context.text ?? ''
     const retryKeyboard = Keyboard.builder().textButton(

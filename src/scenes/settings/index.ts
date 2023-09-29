@@ -4,11 +4,11 @@ import disauth from '@src/dblogic/disauth'
 
 export default new StepScene('settings', [
   async (context: MessageContext) => {
-    const {session} = context
+    const { session } = context
     if (context.scene.step.firstTime || !context.text) {
       await context.send('Настройки:')
     }
-    
+
     switch (context?.messagePayload?.command) {
       case 'home': return context.scene.enter('home')
       case 'exit': {

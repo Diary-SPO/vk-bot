@@ -4,7 +4,7 @@ import { type Person } from '@src/types/database/Person'
 
 export default new StepScene('home', [
   async (context: MessageContext) => {
-    const {session} = context
+    const { session } = context
     if (context.scene.step.firstTime || !context.text) {
       await context.send('Приветики! Ты в главном меню!')
     }
@@ -41,6 +41,7 @@ export default new StepScene('home', [
         break
       }
     }
+
     return await context.send({
       message: '📡 Меню: ',
       keyboard: Keyboard.builder().textButton({

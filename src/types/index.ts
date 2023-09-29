@@ -1,4 +1,4 @@
-import { ISessionContext } from '@vk-io/session'
+import { type ISessionContext } from '@vk-io/session'
 import { type Headers } from 'node-fetch'
 
 export interface CustomContext {
@@ -12,7 +12,7 @@ export interface CustomContext {
       dnevnikUser: DnevnikUser
     }
     enter: (sceneName: string) => void
-  },
+  }
   session: ISessionContext
 }
 
@@ -38,5 +38,3 @@ export interface ApiResponse<T> {
   headers: Headers
   status: number
 }
-
-export interface 

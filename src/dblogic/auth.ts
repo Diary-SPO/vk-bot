@@ -3,7 +3,7 @@ import crypto from '@src/dblogic/crypto'
 import { type CustomContext } from '@types'
 
 export default async (context: CustomContext): Promise<boolean> => {
-  const { session } = context;
+  const { session } = context
   if (session?.isAuth) return true
 
   const vkid = context.senderId
