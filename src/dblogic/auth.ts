@@ -13,6 +13,7 @@ export default async (context: CustomContext): Promise<boolean> => {
 
   if (!user) return false
 
+  // TODO: сделать функцию с указанием типа, чтобы не юзать as Person
   const diaryUser = (await UserDiary.findOne({ id: user.diaryId })) as Person
 
   if (!diaryUser) return false
