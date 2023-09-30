@@ -1,16 +1,24 @@
 import fetch from 'node-fetch'
 import { type ApiResponse, type HTTPMethods } from '@types'
 
-export default async function auth<T> (
-  url: string,
-  method: HTTPMethods = 'GET',
-  body: any
-): Promise<ApiResponse<T> | number> {
+interface Params {
+  url: string
+  method?: HTTPMethods
+  body?: any
+  cookie?: string
+}
+
+export default async function <T> ({
+  url,
+  method = 'GET',
+  body,
+  cookie = ''
+}: Params): Promise<ApiResponse<T> | number> {
   try {
     const response = await fetch(url, {
       method,
       body,
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' }
+      headers: { 'Content-Type': 'application/json;charset=UTF-8', Cookie: cookie }
     })
 
     if (!response.ok) {

@@ -20,11 +20,12 @@
     "typescript": "^5.0.0",
     "colors": "^1.4.0",
     "bun-types": "latest",
-    "diary-shared": "^1.7.2"
+    "diary-shared": "^1.7.3"
   },
   "dependencies": {
     "@vk-io/scenes": "^1.2.1",
     "@vk-io/session": "^2.2.1",
+    "dotenv": "^16.3.1",
     "jshashes": "^1.0.8",
     "mongoose": "^7.5.2",
     "vk-io": "^4.8.3"

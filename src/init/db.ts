@@ -1,21 +1,28 @@
-// Вот тут нужно инициализировать БД
-/* import mongoose from "mongoose";
+import { DATABASE_HOST, DATABASE_PORT, DATABASE_NAME } from '@config'
+import mongoose from 'mongoose'
+import { type DiaryUser, type VKUser } from '@types'
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
-const UserDnevnik = mongoose.model("userDnevnik", new Schema({
-    dnevnikId:  Number,
-    groupId:    Number,
-    firstName:  String,
-    lastName:   String,
-    middleName: String
+const UserDiary = mongoose.model('diaryusers', new Schema<DiaryUser>({
+  id: Number, // id профиля
+  groupId: Number, // id группы
+  login: String, // Логин
+  password: String, // Пароль
+  passwordHashed: String, // Пароль, подготовленный к отправке
+  phone: String, // Номер телефона
+  birthday: String, // Дата рождения
+  firstName: String, // Имя
+  lastName: String, // Фамилия
+  middleName: String, // Отчество
+  cookie: String // Куки
 }))
 
-const UserVK = mongoose.model("userVK", new Schema({
-    dnevnikId: Number,
-    vkId:      Number
+const UserVK = mongoose.model('vkusers', new Schema<VKUser>({
+  diaryId: Number,
+  vkId: Number
 }))
 
-await mongoose.connect("mongodb://192.168.0.112:27017/bot");
+await mongoose.connect(`${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}`)
 
-export default () => {}; */
+export { UserVK, UserDiary }
