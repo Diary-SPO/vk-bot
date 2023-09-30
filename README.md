@@ -30,7 +30,7 @@ To do this, create a **.env** file and specify the main parameters in it:
 | SERVER_URL | https://poo.tomedu.ru/services/security | Address to the services of your diary | Yes |
 | TOKEN | vkq.a.FdSdkdsDfj4ehnEhg... | A token from your community, where the bot will be located | Yes |
 | LIMIT | 20 | Limiting api requests | NO |
-| ENCRYPTED_KEY | MySupperPassTrue | The key for encrypting passwords. Its length should be 16, 24 or 32 characters exactly | YES |
+| ENCRYPTED_KEY | jK309nA8XXk5IKm13XRkxJBXD15JHU8F | The key for encrypting passwords. Its length should be 32 characters exactly | YES |
 | DATABASE_HOST | 192.168.0.112 | Database host | YES |
 | DATABASE_PORT | 27017 | Database port | YES |
 | DATABASE_NAME | bot | Database name | YES |
@@ -40,14 +40,14 @@ Example of a correctly filled file:
 ```dotenv
 SERVER_URL=https://poo.tomedu.ru/services/security
 TOKEN=vkq.a.FdSdkdsDfj4ehnEhg...
-ENCRYPTED_KEY='OPTIONALE_KEY!!!'
+ENCRYPTED_KEY=jK309nA8XXk5IKm13XRkxJBXD15JHU8F
 DATABASE_HOST=mongodb://localhost:27017
 DATABASE_PORT=27017
 DATABASE_NAME=bot
 LIMIT=20
 ```
 
-Your mongodb database should be running on 27017 port. Create a **bot** table with the ***uservks*** table in advance.
+Your mongodb database should be running on 27017 port.
 
 Install the dependencies, then start the server.
 
