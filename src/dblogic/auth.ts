@@ -1,6 +1,7 @@
-import { UserDnevnik, UserVK } from '@src/init/db'
+import { UserDiary, UserVK } from '@src/init/db'
 import crypto from '@src/dblogic/crypto'
 import { type CustomContext } from '@types'
+import { Person } from '@src/types/database/Person'
 
 export default async (context: CustomContext): Promise<boolean> => {
   const { session } = context
@@ -12,14 +13,16 @@ export default async (context: CustomContext): Promise<boolean> => {
 
   if (user === null) return false
 
-  const dnevnikUser = (await UserDnevnik.findOne({ id: user.dnevnikId }))
+  const diaryUser = (await UserDiary.findOne({ id: user.diaryId })) as Person
 
-  if (dnevnikUser === null) return false
+  if (diaryUser === null) return false
 
-  dnevnikUser.password = crypto.decrypt(dnevnikUser?.password ?? '')
+  diaryUser.password = crypto.decrypt(diaryUser?.password ?? '')
+  diaryUser.cookie = crypto.decrypt(diaryUser?.cookie ?? '')
 
   session.isAuth = true
-  session.dnevnikUser = dnevnikUser
+  session.diaryUser = diaryUser
+  console.log(diaryUser)
 
   return true
 }

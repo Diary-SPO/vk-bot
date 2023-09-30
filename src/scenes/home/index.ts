@@ -12,7 +12,7 @@ export default new StepScene('home', [
     switch (context?.messagePayload?.command) {
       case 'settings': return context.scene.enter('settings')
       case 'profile': {
-        const user = session.dnevnikUser as Person
+        const user = session.diaryUser as Person
         const date = new Date(user.birthday)
         await context.send(
           `👤 ${user.lastName} ${user.firstName} ${user.middleName}` +

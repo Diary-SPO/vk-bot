@@ -7,7 +7,8 @@ export interface Person {
   birthday: string // Дата рождения
   firstName: string // Имя
   lastName: string // Фамилия
-  middleName: string // Отчество
+  middleName: string // Отчество,
+  cookie: string
 }
 
 export interface PersonResponse {

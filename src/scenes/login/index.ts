@@ -5,12 +5,19 @@ import { Keyboard, type MessageContext } from 'vk-io'
 
 export default new StepScene('login', [
   async (context: MessageContext) => {
-    const firstTime = context.scene.step.firstTime
+    const {session} = context
+    const firstTime = session.isFirstTime ?? true;
+    const logout    = session.isLogout
     const text = context.text
 
-    if (firstTime || !text) {
+    if (logout) {
+      await context.send('😑 Вы вышли из аккаунта')
+      session.isLogout = false
+      session.isFirstTime = false
+    } else if (firstTime || !text) {
       await context.send('😺 Ого, ты здесь впервые ?')
       await context.send('😨 Для начала нужно авторизироваться.')
+      session.isFirstTime = false;
     }
 
     if (context.messagePayload) {
@@ -141,7 +148,7 @@ export default new StepScene('login', [
       default: {
         const user = res as Person
         session.isAuth = true
-        session.dnevnikUser = user
+        session.diaryUser = user
         await message.editMessage({ message: `🙃 Привет, ${user.firstName}! Ты успешно авторизирован.` })
         context.scene.enter('home')
       }

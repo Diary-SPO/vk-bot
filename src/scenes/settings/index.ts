@@ -1,6 +1,6 @@
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
-import disauth from '@src/dblogic/disauth'
+import logout from '@src/dblogic/logout'
 
 export default new StepScene('settings', [
   async (context: MessageContext) => {
@@ -12,9 +12,10 @@ export default new StepScene('settings', [
     switch (context?.messagePayload?.command) {
       case 'home': return context.scene.enter('home')
       case 'exit': {
-        await disauth(context.senderId)
+        await logout(context.senderId)
         session.isAuth = false
-        session.dnevnikUser = undefined
+        session.diaryUser = undefined
+        session.isLogout = true
         return context.scene.enter('login')
       }
       default: return await context.send({

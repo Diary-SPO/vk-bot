@@ -3,7 +3,7 @@ import Hashes from 'jshashes'
 import { type UserData } from 'diary-shared'
 import { type Person, type PersonResponse } from '@src/types/database/Person'
 import { SERVER_URL } from '@config'
-import { UserDnevnik, UserVK } from '@src/init/db'
+import { UserDiary, UserVK } from '@src/init/db'
 import crypto from '@src/dblogic/crypto'
 
 type UserLogin = Person | string | number | null
@@ -35,26 +35,26 @@ export default async function loginUser (login: string, password: string, vkid: 
       id: student.id,
       groupId: student.groupId,
       login,
-      password,
+      password: crypto.encrypt(password ?? ''),
       phone: detailedInfo.data.person.phone,
       birthday: detailedInfo.data.person.birthday,
       firstName: detailedInfo.data.person.firstName,
       lastName: detailedInfo.data.person.lastName,
-      middleName: detailedInfo.data.person.middleName
+      middleName: detailedInfo.data.person.middleName,
+      cookie: crypto.encrypt(cookie ?? '')
     }
-    regData.password = crypto.encrypt(regData?.password ?? '')
-
-    if ((await UserDnevnik.find({ id: regData.id })).length === 0) {
+    
+    if ((await UserDiary.find({ id: regData.id })).length === 0) {
       // Регаем
-      await (new UserDnevnik(regData)).save()
+      await (new UserDiary(regData)).save()
     } else {
-      await UserDnevnik.updateOne({ id: regData.id }, regData)
+      await UserDiary.updateOne({ id: regData.id }, regData)
     }
 
     if ((await UserVK.find({ vkId: vkid })).length === 0) {
-      await (new UserVK({ dnevnikId: regData.id, vkId: vkid })).save()
+      await (new UserVK({ diaryId: regData.id, vkId: vkid })).save()
     } else {
-      await UserDnevnik.updateOne({ vkId: vkid }, { dnevnikId: regData.id, vkId: vkid })
+      await UserDiary.updateOne({ vkId: vkid }, { diaryId: regData.id, vkId: vkid })
     }
 
     return regData
