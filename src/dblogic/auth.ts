@@ -23,7 +23,6 @@ export default async (context: CustomContext): Promise<boolean> => {
 
   session.isAuth = true
   session.diaryUser = diaryUser
-  console.log(diaryUser)
 
   return true
 }
