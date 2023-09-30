@@ -43,7 +43,7 @@ export default async function loginUser (login: string, password: string, vkid: 
       middleName: detailedInfo.data.person.middleName,
       cookie: crypto.encrypt(cookie ?? '')
     }
-    
+
     if ((await UserDiary.find({ id: regData.id })).length === 0) {
       // Регаем
       await (new UserDiary(regData)).save()

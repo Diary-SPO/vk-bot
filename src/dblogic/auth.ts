@@ -1,7 +1,7 @@
 import { UserDiary, UserVK } from '@src/init/db'
 import crypto from '@src/dblogic/crypto'
 import { type CustomContext } from '@types'
-import { Person } from '@src/types/database/Person'
+import { type Person } from '@src/types/database/Person'
 
 export default async (context: CustomContext): Promise<boolean> => {
   const { session } = context

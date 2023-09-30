@@ -5,9 +5,9 @@ import { Keyboard, type MessageContext } from 'vk-io'
 
 export default new StepScene('login', [
   async (context: MessageContext) => {
-    const {session} = context
-    const firstTime = session.isFirstTime ?? true;
-    const logout    = session.isLogout
+    const { session } = context
+    const firstTime = session.isFirstTime ?? true
+    const logout = session.isLogout
     const text = context.text
 
     if (logout) {
@@ -17,7 +17,7 @@ export default new StepScene('login', [
     } else if (firstTime || !text) {
       await context.send('😺 Ого, ты здесь впервые ?')
       await context.send('😨 Для начала нужно авторизироваться.')
-      session.isFirstTime = false;
+      session.isFirstTime = false
     }
 
     if (context.messagePayload) {

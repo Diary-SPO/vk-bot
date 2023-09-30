@@ -1,4 +1,4 @@
-import { IContext, type ISessionContext } from '@vk-io/session'
+import { type IContext, type ISessionContext } from '@vk-io/session'
 import { type Headers } from 'node-fetch'
 
 export interface CustomContext extends IContext {
@@ -30,12 +30,12 @@ export interface DiaryUser {
   birthday: string
   firstName: string
   lastName: string
-  middleName: string,
+  middleName: string
   cookie: string
 }
 
 export interface VKUser {
-  diaryId: number,
+  diaryId: number
   vkId: number
 }
 
