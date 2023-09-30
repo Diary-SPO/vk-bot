@@ -30,7 +30,7 @@ git clone -b MainAlternative https://github.com/DIARY-SPO/vk-bot
 | SERVER_URL | https://poo.tomedu.ru/services/security | Адрес до сервисов вашего дневника | Да |
 | TOKEN | vkq.a.FdSdkdsDfj4ehnEhg... | Токен от вашего сообщества, где будет располагаться бот | Да |
 | LIMIT | 20 | Лимит запрсоов к API | Нет |
-| ENCRYPTED_KEY | MySupperPassTrue | Ключ для шифрования паролей. Его длина должна составлять ровно 16, 24 или 32 символа | Да |
+| ENCRYPTED_KEY | jK309nA8XXk5IKm13XRkxJBXD15JHU8F | Ключ для шифрования паролей. Его длина должна составлять ровно 32 символа | Да |
 | DATABASE_HOST | 192.168.0.112 | Хост базы данных | Да |
 | DATABASE_PORT | 27017 | Порт от базы данных | Да |
 | DATABASE_NAME | bot | Имя базы данных | Да |
@@ -40,20 +40,20 @@ git clone -b MainAlternative https://github.com/DIARY-SPO/vk-bot
 ```sh
 SERVER_URL=https://poo.tomedu.ru/services/security
 TOKEN=vkq.a.FdSdkdsDfj4ehnEhg...
-ENCRYPTED_KEY=OPTIONALE_KEY!!!
+ENCRYPTED_KEY=jK309nA8XXk5IKm13XRkxJBXD15JHU8F
 DATABASE_HOST=192.168.0.112
 DATABASE_PORT=27017
 DATABASE_NAME=bot
 LIMIT=20
 ```
 
-Ваша база данных mongodb должна работать на порту 27017. Заранее создайте базу **bot** с таблицей ***uservks***.
+Ваша база данных mongodb должна работать на порту 27017.
 
 Установите зависимости, затем запустите сервер.
 
 ```sh
 bun install
-bun .
+bun run --watch main.ts
 ```
 
 ------
