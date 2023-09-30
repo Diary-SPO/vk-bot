@@ -11,11 +11,11 @@ export default async (context: CustomContext): Promise<boolean> => {
 
   const user = (await UserVK.findOne({ vkId: vkid }))
 
-  if (user === null) return false
+  if (!user) return false
 
   const diaryUser = (await UserDiary.findOne({ id: user.diaryId })) as Person
 
-  if (diaryUser === null) return false
+  if (!diaryUser) return false
 
   diaryUser.password = crypto.decrypt(diaryUser?.password ?? '')
   diaryUser.cookie = crypto.decrypt(diaryUser?.cookie ?? '')
