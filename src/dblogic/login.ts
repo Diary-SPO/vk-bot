@@ -1,14 +1,16 @@
+import { Insert_values, WHERE } from '@src/dblogic/sql/query'
+import { UserVK, UserDiary } from '@src/init/db'
 import fetcher from '@src/api/fetcher'
 import Hashes from 'jshashes'
+import { type VKUser, type DiaryUser } from '@types'
 import { type UserData } from 'diary-shared'
 import { type Person, type PersonResponse } from '@src/types/database/Person'
 import { SERVER_URL } from '@config'
-import { UserDiary, UserVK } from '@src/init/db'
 import crypto from '@src/dblogic/crypto'
 
 type UserLogin = Person | string | number | null
 
-export default async function loginUser (login: string, password: string, vkid: number): Promise<UserLogin> {
+export default async function loginUser (login: string, password: string, vkid: number): Promise<DiaryUser | number> {
   const passwordHashed = (new Hashes.SHA256()).b64(password)
   const res = await fetcher<UserData>({
     url: `${SERVER_URL}/login`,
@@ -31,30 +33,36 @@ export default async function loginUser (login: string, password: string, vkid: 
 
     if (typeof detailedInfo === 'number') return detailedInfo
 
-    const regData: Person = {
+    const regData: DiaryUser = {
       id: student.id,
-      groupId: student.groupId,
+      groupid: student.groupId,
       login,
       password: crypto.encrypt(password ?? ''),
       phone: detailedInfo.data.person.phone,
       birthday: detailedInfo.data.person.birthday,
-      firstName: detailedInfo.data.person.firstName,
-      lastName: detailedInfo.data.person.lastName,
-      middleName: detailedInfo.data.person.middleName,
+      firstname: detailedInfo.data.person.firstName,
+      lastname: detailedInfo.data.person.lastName,
+      middlename: detailedInfo.data.person.middleName,
       cookie: crypto.encrypt(cookie ?? '')
     }
 
-    if ((await UserDiary.find({ id: regData.id })).length === 0) {
+    //if ((await UserDiary.findOne<DiaryUser>(['*'], `id = ${regData.id}`)) != null) {
+      if ((await UserDiary.query('SELECT').where(new WHERE().IF(`id = ${regData.id}`)).run()).length == 0) {
       // Регаем
-      await (new UserDiary(regData)).save()
+      await UserDiary.query('INSERT').insert(regData as unknown as Insert_values).run()
+      //await (new UserDiary(regData)).save()
     } else {
-      await UserDiary.updateOne({ id: regData.id }, regData)
+      await UserDiary.query("UPDATE").update(regData as unknown as Insert_values, new WHERE().IF(`id = ${regData.id}`)).run()
+      //await UserDiary.updateOne({ id: regData.id }, regData)
     }
 
-    if ((await UserVK.find({ vkId: vkid })).length === 0) {
-      await (new UserVK({ diaryId: regData.id, vkId: vkid })).save()
+    //if ((await UserVK.findOne<VKUser>(['*'], ` vkId = ${ vkid }`)) != null) {
+      if ((await UserVK.query('SELECT').where(new WHERE().IF(`vkid = ${vkid}`)).run()).length == 0) {
+        await UserVK.query('INSERT').insert({diaryid: regData.id, vkid}).run()
+      //await (new UserVK({ diaryId: regData.id, vkId: vkid })).save()
     } else {
-      await UserDiary.updateOne({ vkId: vkid }, { diaryId: regData.id, vkId: vkid })
+      await UserDiary.query('UPDATE').update({diaryid: regData.id, vkid}, new WHERE().IF(`vkid = ${vkid}`)).run()
+      //await UserDiary.updateOne({ vkId: vkid }, { diaryId: regData.id, vkId: vkid })
     }
 
     return regData

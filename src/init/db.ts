@@ -1,7 +1,14 @@
-import { DATABASE_HOST, DATABASE_PORT, DATABASE_NAME } from '@config'
-import mongoose from 'mongoose'
-import { type DiaryUser, type VKUser } from '@types'
+import { TABLE } from '@src/dblogic/sql/query'
+//import mongoose from 'mongoose'
+//import { type DiaryUser, type VKUser } from '@types'
 
+
+const UserDiary = new TABLE('diaryuser')
+const UserVK = new TABLE('vkuser')
+
+export {UserDiary, UserVK};
+
+/*
 const Schema = mongoose.Schema
 
 const UserDiary = mongoose.model('diaryusers', new Schema<DiaryUser>({
@@ -9,7 +16,6 @@ const UserDiary = mongoose.model('diaryusers', new Schema<DiaryUser>({
   groupId: Number, // id группы
   login: String, // Логин
   password: String, // Пароль
-  passwordHashed: String, // Пароль, подготовленный к отправке
   phone: String, // Номер телефона
   birthday: String, // Дата рождения
   firstName: String, // Имя
@@ -26,3 +32,4 @@ const UserVK = mongoose.model('vkusers', new Schema<VKUser>({
 await mongoose.connect(`${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}`)
 
 export { UserVK, UserDiary }
+*/

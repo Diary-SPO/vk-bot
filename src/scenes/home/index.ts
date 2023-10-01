@@ -1,6 +1,6 @@
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
-import { type Person } from '@src/types/database/Person'
+import { DiaryUser } from '@src/types'
 
 export default new StepScene('home', [
   async (context: MessageContext) => {
@@ -12,10 +12,10 @@ export default new StepScene('home', [
     switch (context?.messagePayload?.command) {
       case 'settings': return context.scene.enter('settings')
       case 'profile': {
-        const user = session.diaryUser as Person
+        const user = session.diaryUser as DiaryUser
         const date = new Date(user.birthday)
         await context.send(
-          `👤 ${user.lastName} ${user.firstName} ${user.middleName}` +
+          `👤 ${user.lastname} ${user.firstname} ${user.middlename}` +
           `\n👉 ${date.getUTCDate()} лет` +
           `\n📱 ${user.phone}`
         )

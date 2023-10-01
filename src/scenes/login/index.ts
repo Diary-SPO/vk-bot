@@ -1,4 +1,5 @@
 import auth from '@src/dblogic/login'
+import { DiaryUser } from '@src/types'
 import { type Person } from '@src/types/database/Person'
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
@@ -146,10 +147,10 @@ export default new StepScene('login', [
         return
       }
       default: {
-        const user = res as Person
+        const user = res as DiaryUser
         session.isAuth = true
         session.diaryUser = user
-        await message.editMessage({ message: `🙃 Привет, ${user.firstName}! Ты успешно авторизирован.` })
+        await message.editMessage({ message: `🙃 Привет, ${user.firstname}! Ты успешно авторизирован.` })
         context.scene.enter('home')
       }
     }
