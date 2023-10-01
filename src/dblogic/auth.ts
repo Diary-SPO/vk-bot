@@ -1,7 +1,6 @@
-import { TABLE, WHERE } from '@src/dblogic/sql/query'
+import { WHERE } from '@src/dblogic/sql/query'
 import crypto from '@src/dblogic/crypto'
 import { type CustomContext, type VKUser, type DiaryUser } from '@types'
-import { type Person } from '@src/types/database/Person'
 import { UserVK, UserDiary } from '@src/init/db'
 
 export default async (context: CustomContext): Promise<boolean> => {
@@ -15,8 +14,8 @@ export default async (context: CustomContext): Promise<boolean> => {
   if (!user) return false
 
   // TODO: сделать функцию с указанием типа, чтобы не юзать as Person
-  const diaryUser = (await UserDiary.query('SELECT').where(new WHERE().IF(`id = ${ user.diaryid }`)).run() as DiaryUser[])[0]
-  //const diaryUser = (await UserDiary.findOne<DiaryUser>(['*'], ` id = ${ user.diaryId }`)) as Person
+  const diaryUser = (await UserDiary.query('SELECT').where(new WHERE().IF(`id = ${user.diaryid}`)).run() as DiaryUser[])[0]
+  // const diaryUser = (await UserDiary.findOne<DiaryUser>(['*'], ` id = ${ user.diaryId }`)) as Person
 
   if (!diaryUser) return false
 

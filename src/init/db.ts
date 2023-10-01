@@ -1,12 +1,11 @@
 import { TABLE } from '@src/dblogic/sql/query'
-//import mongoose from 'mongoose'
-//import { type DiaryUser, type VKUser } from '@types'
-
+// import mongoose from 'mongoose'
+// import { type DiaryUser, type VKUser } from '@types'
 
 const UserDiary = new TABLE('diaryuser')
 const UserVK = new TABLE('vkuser')
 
-export {UserDiary, UserVK};
+export { UserDiary, UserVK }
 
 /*
 const Schema = mongoose.Schema
