@@ -1,156 +1,94 @@
-import { client } from '@src/init/connectdb'
-/*
-export default class Query {
-    readonly DB_NAME: string;
-    constructor(DB_NAME: string) {
-        this.DB_NAME = DB_NAME;
-    }
-    async findOne<T>(columns: string[], WHERE: string) {
-        return (await client.query(`
-            SELECT  ${ this.enumeration(columns) }
-            from    ${ this.DB_NAME  }
-            WHERE   ${      WHERE    }
-            LIMIT 1;
-        `)).rows[0] as T
-    }
-    enumeration(values: string[]) {
-        return values.join(',');
-    }
-} */
+import crypto from '@src/dblogic/crypto'
+import { client } from '@src/init/connectdb.ts'
 
-class TABLE {
-  readonly TABLE_NAME: string
-  constructor (TABLE_NAME: string) {
-    this.TABLE_NAME = TABLE_NAME
-  }
-
-  query (type: 'SELECT' | 'UPDATE' | 'DELETE' | 'INSERT'): QUERY {
-    return new QUERY(this.TABLE_NAME, type)
-  }
+async function executeQuery<T> (query: string): Promise<T[]> {
+  const result = await client.query(query)
+  return result.rows
 }
 
-class QUERY {
-  readonly TABLE_NAME: string
-  private COLUMNS: string
-  private CONDITIONS: WHERE | null = null
-  private readonly TYPE: string
-  private INSERT: string | null = null
-  private UPDATE: string | null = null
-  private DELETE: string | null = null
-  constructor (TABLE_NAME: string, TYPE: string) {
-    this.TABLE_NAME = TABLE_NAME
-    this.COLUMNS = '*'
-    this.TYPE = TYPE
-  }
+export const decryptData = (data: string | null): string => {
+  return crypto.decrypt(data ?? '')
+}
 
-  // Работаем со столбцами
-  columns (columns: string[]): QUERY {
-    if (this.COLUMNS !== '*') { this.COLUMNS = [this.COLUMNS, ...columns].join(', ') } else this.COLUMNS = columns.join(', ')
-    return this
-  }
+interface QueryBuilder<T> {
+  table: string
+  columns: string[]
+  conditions: string
 
-  column (column: string): QUERY {
-    this.COLUMNS = column
-    return this
-  }
+  from: (table: string) => QueryBuilder<T>
 
-  // Работаем с фильтрами
-  where (condition: WHERE): QUERY {
-    condition = condition.setQuery(this)
-    this.CONDITIONS = condition
-    return this
-  }
+  select: (...columns: string[]) => QueryBuilder<T>
 
-  // Вставка
-  insert (values: Insert_values): QUERY {
-    const insert = `
-        INSERT INTO ${this.TABLE_NAME}
-        (${Object.keys(values).join(', ')})
-        VALUES ('${Object.values(values).join('\', \'')}\')`
-    this.INSERT = insert
-    return this
-  }
+  where: (conditions: string) => QueryBuilder<T>
 
-  // Обновление
-  update (newValues: Insert_values, where: WHERE): QUERY {
-    const update = `
-        UPDATE ${this.TABLE_NAME}
-        SET ${Object.entries(newValues).map(([key, value]) => `\n${key} = '${value}'`).join(',')}
-        WHERE ${where.get()}`
-    this.UPDATE = update
-    return this
-  }
+  first: () => Promise<T | null>
 
-  // Удаление
-  delete (where: WHERE): QUERY {
-    const sqlDelete = `
-        DELETE FROM ${this.TABLE_NAME}
-        WHERE ${where.get()}`
-    this.DELETE = sqlDelete
-    return this
-  }
+  delete: () => Promise<void>
 
-  // Выполнение
-  async run (): Promise<any | []> {
-    const query = `${this._CONSTRUCT_TYPE()} `
-    console.log(query)
-    return (await client.query(query)).rows ?? []
-  }
+  insert: (data: Partial<T>) => Promise<void>
 
-  private _CONSTRUCT_TYPE (): string | null | undefined {
-    switch (this.TYPE) {
-      case 'SELECT':{
-        let query = `
-                SELECT ${this.COLUMNS} FROM ${this.TABLE_NAME}
-                `
-        if (this.CONDITIONS != null) {
-          if (this.CONDITIONS.get() != null) {
-            query += `WHERE ${this.CONDITIONS.get()}`
+  buildInsertQuery: (data: Partial<T>) => Promise<string>
+
+  buildUpdateQuery: (data: Partial<T>) => Promise<string>
+}
+
+export function createQueryBuilder<T> (): QueryBuilder<T> {
+  return {
+    table: '',
+    columns: ['*'],
+    conditions: '',
+
+    from (table) {
+      this.table = table
+      return this
+    },
+
+    select (...columns) {
+      this.columns = columns
+      return this
+    },
+
+    where (conditions) {
+      this.conditions = conditions
+      return this
+    },
+
+    async first (): Promise<T | null> {
+      const query = `SELECT ${this.columns.join(', ')} FROM ${this.table} WHERE ${this.conditions} LIMIT 1`
+      const result = await executeQuery<T>(query)
+      return result[0] || null
+    },
+
+    async delete (): Promise<void> {
+      const query = `DELETE FROM ${this.table} WHERE ${this.conditions}`
+      await executeQuery(query)
+    },
+
+    async buildInsertQuery (data: Partial<T>): Promise<string> {
+      const columns = Object.keys(data).join(', ')
+      const values = Object.values(data).map((value) => typeof value === 'string' ? `'${value}'` : value).join(', ')
+      return `INSERT INTO ${this.table} (${columns}) VALUES (${values})`
+    },
+
+    async insert (data: Partial<T>): Promise<void> {
+      const columns = Object.keys(data).join(', ')
+      const values = Object.values(data).map((value) => typeof value === 'string' ? `'${value}'` : value).join(', ')
+      const query = `INSERT INTO ${this.table} (${columns}) VALUES (${values})`
+      await executeQuery(query)
+    },
+
+    async buildUpdateQuery (data: Partial<T>): Promise<string> {
+      const updateValues = Object.entries(data)
+        .map(([column, value]) => {
+          if (typeof value === 'string') {
+            return `${column} = '${value}'`
           }
-        }
-        return query
-      }
-      case 'INSERT': {
-        return this.INSERT
-      }
-      case 'UPDATE': {
-        return this.UPDATE
-      }
-      case 'DELETE': {
-        return this.DELETE
-      }
+          // TODO: разобраться в eslint ошибке
+          return `${column} = ${value}`
+        })
+        .join(', ')
+
+      return `UPDATE ${this.table} SET ${updateValues} WHERE ${this.conditions}`
     }
   }
 }
-
-class WHERE {
-  private CONDITIONS: string | null = null
-  private query: QUERY | null = null
-  // constructor () {}
-  setQuery (query: QUERY): WHERE {
-    this.query = query
-    return this
-  }
-
-  IF (condition: string): WHERE {
-    this.CONDITIONS = condition
-    return this
-  }
-
-  ANDIF (condition: string | WHERE): WHERE {
-    if (typeof (condition) === 'string') { this.CONDITIONS += ` AND ${condition}` } else this.CONDITIONS += `AND  (${condition.get()})`
-    return this
-  }
-
-  ORIF (condition: string | WHERE): WHERE {
-    if (typeof (condition) === 'string') { this.CONDITIONS += ` OR ${condition}` } else this.CONDITIONS += ` OR (${condition.get()})`
-    return this
-  }
-
-  get (): string | null {
-    return this.CONDITIONS
-  }
-}
-
-export { TABLE, QUERY, WHERE }
-export type Insert_values = Record<string, string | number>

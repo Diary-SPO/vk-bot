@@ -1,17 +1,14 @@
-import { type Insert_values, WHERE } from '@src/dblogic/sql/query'
-import { UserVK, UserDiary } from '@src/init/db'
+import { type DiaryUser, type VKUser } from '@types'
+import { createQueryBuilder } from '@src/dblogic/sql/query'
+import crypto from '@src/dblogic/crypto'
 import fetcher from '@src/api/fetcher'
 import Hashes from 'jshashes'
-import { type DiaryUser } from '@types'
 import { type UserData } from 'diary-shared'
 import { type PersonResponse } from '@src/types/database/Person'
 import { SERVER_URL } from '@config'
-import crypto from '@src/dblogic/crypto'
 
-// type UserLogin = Person | string | number | null
-
-export default async function loginUser (login: string, password: string, vkid: number): Promise<DiaryUser | number> {
-  const passwordHashed = (new Hashes.SHA256()).b64(password)
+async function loginUser (login: string, password: string, vkid: number): Promise<DiaryUser | number> {
+  const passwordHashed = new Hashes.SHA256().b64(password)
   const res = await fetcher<UserData>({
     url: `${SERVER_URL}/login`,
     method: 'POST',
@@ -46,23 +43,22 @@ export default async function loginUser (login: string, password: string, vkid: 
       cookie: crypto.encrypt(cookie ?? '')
     }
 
-    // if ((await UserDiary.findOne<DiaryUser>(['*'], `id = ${regData.id}`)) != null) {
-    if ((await UserDiary.query('SELECT').where(new WHERE().IF(`id = ${regData.id}`)).run()).length === 0) {
-      // Регаем
-      await UserDiary.query('INSERT').insert(regData as unknown as Insert_values).run()
-      // await (new UserDiary(regData)).save()
+    const userDiaryQueryBuilder = createQueryBuilder<DiaryUser>()
+    const userVKQueryBuilder = createQueryBuilder<VKUser>()
+
+    const existingDiaryUser = await userDiaryQueryBuilder.from('UserDiary').select('*').where(`id = ${regData.id}`).first()
+    const existingVKUser = await userVKQueryBuilder.from('UserVK').select('*').where(`vkid = ${vkid}`).first()
+
+    if (!existingDiaryUser) {
+      await userDiaryQueryBuilder.buildInsertQuery(regData)
     } else {
-      await UserDiary.query('UPDATE').update(regData as unknown as Insert_values, new WHERE().IF(`id = ${regData.id}`)).run()
-      // await UserDiary.updateOne({ id: regData.id }, regData)
+      await userDiaryQueryBuilder.buildUpdateQuery(regData)
     }
 
-    // if ((await UserVK.findOne<VKUser>(['*'], ` vkId = ${ vkid }`)) != null) {
-    if ((await UserVK.query('SELECT').where(new WHERE().IF(`vkid = ${vkid}`)).run()).length === 0) {
-      await UserVK.query('INSERT').insert({ diaryid: regData.id, vkid }).run()
-      // await (new UserVK({ diaryId: regData.id, vkId: vkid })).save()
+    if (!existingVKUser) {
+      await userVKQueryBuilder.buildInsertQuery({ diaryid: regData.id, vkid })
     } else {
-      await UserDiary.query('UPDATE').update({ diaryid: regData.id, vkid }, new WHERE().IF(`vkid = ${vkid}`)).run()
-      // await UserDiary.updateOne({ vkId: vkid }, { diaryId: regData.id, vkId: vkid })
+      await userVKQueryBuilder.buildUpdateQuery({ diaryid: regData.id, vkid })
     }
 
     return regData
@@ -73,3 +69,5 @@ export default async function loginUser (login: string, password: string, vkid: 
   // 501 - сервер упал.
   // 1   - неизвестная ошибка
 }
+
+export default loginUser
