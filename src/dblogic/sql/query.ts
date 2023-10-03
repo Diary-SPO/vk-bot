@@ -85,8 +85,6 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
           if (typeof value === 'string') {
             return `${column} = '${value}'`
           }
-          // TODO: разобраться в eslint ошибке ( Fix :) )
-          // UPD: Он жаловался на неопределённый тип ( map(value: [string, -> unknown <- ]) )
           return `${String(column)} = ${String(value)}`
         })
         .join(', ')
