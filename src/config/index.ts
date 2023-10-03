@@ -8,12 +8,21 @@ if (!fs.existsSync('.env')) {
   process.exit()
 }
 
-export const TOKEN = Bun.env?.TOKEN ?? process.env?.TOKEN ?? ''
-export const LIMIT = Bun.env?.LIMIT ?? process.env?.LIMIT ?? 20
-export const SERVER_URL = Bun.env?.SERVER_URL ?? process.env?.SERVER_URL ?? undefined
-export const DATABASE_HOST = Bun.env?.DATABASE_HOST ?? process.env?.DATABASE_HOST ?? undefined
-export const DATABASE_PORT = Bun.env?.DATABASE_PORT ?? process.env?.DATABASE_PORT ?? undefined
-export const DATABASE_NAME = Bun.env?.DATABASE_NAME ?? process.env?.DATABASE_NAME ?? undefined
-export const DATABASE_USERNAME = Bun.env?.DATABASE_USERNAME ?? process.env?.DATABASE_USERNAME ?? undefined
-export const DATABASE_PASSWORD = Bun.env?.DATABASE_PASSWORD ?? process.env?.DATABASE_PASSWORD ?? undefined
-export const ENCRYPT_KEY = Bun.env?.ENCRYPT_KEY ?? process.env?.ENCRYPT_KEY ?? '' // 12, 24 или 32 символа
+const PARAMS_INIT: {[key: string]: string | number | undefined} = {
+  TOKEN: undefined,
+  LIMIT: 20,
+  SERVER_URL: undefined,
+  DATABASE_HOST: undefined,
+  DATABASE_PORT: undefined,
+  DATABASE_NAME: undefined,
+  DATABASE_USERNAME: undefined,
+  DATABASE_PASSWORD: undefined,
+  ENCRYPT_KEY: undefined
+}
+
+Object.keys(PARAMS_INIT).forEach((index) => {
+  PARAMS_INIT[index] = Bun.env?.[index] ?? process.env?.[index] ?? PARAMS_INIT[index]
+  if (!PARAMS_INIT[index]) throw new Error(`The field value is not filled in '${index}'! Specify a value other than undefined`)
+})
+
+export const { TOKEN, LIMIT, SERVER_URL, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD, ENCRYPT_KEY } = PARAMS_INIT
