@@ -1,7 +1,5 @@
-import { UserDiary, UserVK } from '@src/init/db'
-import crypto from '@src/dblogic/crypto'
-import { type CustomContext } from '@types'
-import { type Person } from '@src/types/database/Person'
+import { type CustomContext, type VKUser, type DiaryUser } from '@types'
+import { decryptData, createQueryBuilder } from '@src/dblogic/sql'
 
 export default async (context: CustomContext): Promise<boolean> => {
   const { session } = context
@@ -9,20 +7,34 @@ export default async (context: CustomContext): Promise<boolean> => {
 
   const vkid = context.senderId
 
-  const user = (await UserVK.findOne({ vkId: vkid }))
+  try {
+    const queryBuilder = createQueryBuilder<VKUser>()
+    const user = await queryBuilder
+      .from('VKUser')
+      .select('*')
+      .where(`vkid = ${vkid}`)
+      .first()
 
-  if (!user) return false
+    if (!user) return false
 
-  // TODO: сделать функцию с указанием типа, чтобы не юзать as Person
-  const diaryUser = (await UserDiary.findOne({ id: user.diaryId })) as Person
+    const diaryUserQueryBuilder = createQueryBuilder<DiaryUser>()
+    const diaryUser = await diaryUserQueryBuilder
+      .from('diaryUser')
+      .select('*')
+      .where(`id = ${user.diaryid}`)
+      .first()
 
-  if (!diaryUser) return false
+    if (!diaryUser) return false
 
-  diaryUser.password = crypto.decrypt(diaryUser?.password ?? '')
-  diaryUser.cookie = crypto.decrypt(diaryUser?.cookie ?? '')
+    diaryUser.password = decryptData(diaryUser?.password)
+    diaryUser.cookie = decryptData(diaryUser?.cookie)
 
-  session.isAuth = true
-  session.diaryUser = diaryUser
+    session.isAuth = true
+    session.diaryUser = diaryUser
 
-  return true
+    return true
+  } catch (error) {
+    console.error('Ошибка при выполнении запроса:', error)
+    return false
+  }
 }

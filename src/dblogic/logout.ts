@@ -1,5 +1,14 @@
-import { UserVK } from '@src/init/db'
+import { createQueryBuilder } from './sql/query'
 
 export default async (vkId: number): Promise<void> => {
-  await UserVK.deleteOne({ vkId })
+  try {
+    const userVKQueryBuilder = createQueryBuilder()
+
+    await userVKQueryBuilder
+      .from('VKUser')
+      .where(`vkid = ${vkId}`)
+      .delete()
+  } catch (error) {
+    console.error('Ошибка при удалении записи:', error)
+  }
 }

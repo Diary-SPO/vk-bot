@@ -1,15 +1,14 @@
+import { type DiaryUser, type VKUser } from '@types'
+import { createQueryBuilder } from '@src/dblogic/sql/query'
+import crypto from '@src/dblogic/crypto'
 import fetcher from '@src/api/fetcher'
 import Hashes from 'jshashes'
 import { type UserData } from 'diary-shared'
-import { type Person, type PersonResponse } from '@src/types/database/Person'
+import { type PersonResponse } from '@src/types/database/Person'
 import { SERVER_URL } from '@config'
-import { UserDiary, UserVK } from '@src/init/db'
-import crypto from '@src/dblogic/crypto'
 
-type UserLogin = Person | string | number | null
-
-export default async function loginUser (login: string, password: string, vkid: number): Promise<UserLogin> {
-  const passwordHashed = (new Hashes.SHA256()).b64(password)
+async function loginUser (login: string, password: string, vkid: number): Promise<DiaryUser | number> {
+  const passwordHashed = new Hashes.SHA256().b64(password)
   const res = await fetcher<UserData>({
     url: `${SERVER_URL}/login`,
     method: 'POST',
@@ -31,37 +30,45 @@ export default async function loginUser (login: string, password: string, vkid: 
 
     if (typeof detailedInfo === 'number') return detailedInfo
 
-    const regData: Person = {
+    const regData: DiaryUser = {
       id: student.id,
-      groupId: student.groupId,
+      groupid: student.groupId,
       login,
       password: crypto.encrypt(password ?? ''),
       phone: detailedInfo.data.person.phone,
       birthday: detailedInfo.data.person.birthday,
-      firstName: detailedInfo.data.person.firstName,
-      lastName: detailedInfo.data.person.lastName,
-      middleName: detailedInfo.data.person.middleName,
+      firstname: detailedInfo.data.person.firstName,
+      lastname: detailedInfo.data.person.lastName,
+      middlename: detailedInfo.data.person.middleName,
       cookie: crypto.encrypt(cookie ?? '')
     }
 
-    if ((await UserDiary.find({ id: regData.id })).length === 0) {
-      // Регаем
-      await (new UserDiary(regData)).save()
+    const userDiaryQueryBuilder = createQueryBuilder<DiaryUser>()
+    const userVKQueryBuilder = createQueryBuilder<VKUser>()
+
+    const existingDiaryUser = await userDiaryQueryBuilder.from('diaryUser').select('*').where(`id = ${regData.id}`).first()
+    const existingVKUser = await userVKQueryBuilder.from('VKUser').select('*').where(`vkid = ${vkid}`).first()
+
+    if (!existingDiaryUser) {
+      await userDiaryQueryBuilder.insert(regData)
     } else {
-      await UserDiary.updateOne({ id: regData.id }, regData)
+      await userDiaryQueryBuilder.update(regData)
     }
 
-    if ((await UserVK.find({ vkId: vkid })).length === 0) {
-      await (new UserVK({ diaryId: regData.id, vkId: vkid })).save()
+    if (!existingVKUser) {
+      await userVKQueryBuilder.insert({ diaryid: regData.id, vkid })
     } else {
-      await UserDiary.updateOne({ vkId: vkid }, { diaryId: regData.id, vkId: vkid })
+      await userVKQueryBuilder.update({ diaryid: regData.id, vkid })
     }
 
     return regData
   } catch (error) {
+    console.log('Ошибка авторизации:', error)
     return 1
   }
   // 401 - ошибка запроса,
   // 501 - сервер упал.
   // 1   - неизвестная ошибка
 }
+
+export default loginUser

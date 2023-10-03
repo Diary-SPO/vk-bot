@@ -22,21 +22,20 @@ export type HTTPMethods = 'GET' | 'POST'
 
 export interface DiaryUser {
   id: number
-  groupId: number
+  groupid: number
   login: string
   password: string
-  passwordHashed: string
   phone: string
   birthday: string
-  firstName: string
-  lastName: string
-  middleName: string
+  firstname: string
+  lastname: string
+  middlename: string
   cookie: string
 }
 
 export interface VKUser {
-  diaryId: number
-  vkId: number
+  diaryid: number
+  vkid: number
 }
 
 export interface ApiResponse<T> {
