@@ -27,6 +27,8 @@ interface QueryBuilder<T> {
 
   insert: (data: Partial<T>) => Promise<void>
 
+  update: (data: Partial<T>) => Promise<void>
+
   buildInsertQuery: (data: Partial<T>) => Promise<string>
 
   buildUpdateQuery: (data: Partial<T>) => Promise<string>
@@ -83,12 +85,17 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
           if (typeof value === 'string') {
             return `${column} = '${value}'`
           }
-          // TODO: разобраться в eslint ошибке
-          return `${column} = ${value}`
+          // TODO: разобраться в eslint ошибке ( Fix :) )
+          // UPD: Он жаловался на неопределённый тип ( map(value: [string, -> unknown <- ]) )
+          return `${String(column)} = ${String(value)}`
         })
         .join(', ')
 
       return `UPDATE ${this.table} SET ${updateValues} WHERE ${this.conditions}`
+    },
+
+    async update (data: Partial<T>): Promise<void> {
+      await executeQuery(await this.buildUpdateQuery(data))
     }
   }
 }

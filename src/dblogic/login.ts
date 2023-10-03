@@ -46,23 +46,24 @@ async function loginUser (login: string, password: string, vkid: number): Promis
     const userDiaryQueryBuilder = createQueryBuilder<DiaryUser>()
     const userVKQueryBuilder = createQueryBuilder<VKUser>()
 
-    const existingDiaryUser = await userDiaryQueryBuilder.from('UserDiary').select('*').where(`id = ${regData.id}`).first()
-    const existingVKUser = await userVKQueryBuilder.from('UserVK').select('*').where(`vkid = ${vkid}`).first()
+    const existingDiaryUser = await userDiaryQueryBuilder.from('diaryUser').select('*').where(`id = ${regData.id}`).first()
+    const existingVKUser = await userVKQueryBuilder.from('VKUser').select('*').where(`vkid = ${vkid}`).first()
 
     if (!existingDiaryUser) {
-      await userDiaryQueryBuilder.buildInsertQuery(regData)
+      await userDiaryQueryBuilder.insert(regData)
     } else {
-      await userDiaryQueryBuilder.buildUpdateQuery(regData)
+      await userDiaryQueryBuilder.update(regData)
     }
 
     if (!existingVKUser) {
-      await userVKQueryBuilder.buildInsertQuery({ diaryid: regData.id, vkid })
+      await userVKQueryBuilder.insert({ diaryid: regData.id, vkid })
     } else {
-      await userVKQueryBuilder.buildUpdateQuery({ diaryid: regData.id, vkid })
+      await userVKQueryBuilder.update({ diaryid: regData.id, vkid })
     }
 
     return regData
   } catch (error) {
+    console.log('Ошибка авторизации:', error)
     return 1
   }
   // 401 - ошибка запроса,
