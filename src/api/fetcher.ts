@@ -4,6 +4,7 @@ import { type ApiResponse, type HTTPMethods } from '@types'
 interface Params {
   url: string
   method?: HTTPMethods
+  // TODO: типизировать потом (можно через дженерик)
   body?: any
   cookie?: string
 }
