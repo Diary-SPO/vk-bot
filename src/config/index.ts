@@ -6,7 +6,17 @@ if (!fs.existsSync('.env')) {
   throw new Error(`.env file not found.`)
 }
 
-const PARAMS_INIT: ParamsInit = {}
+const PARAMS_INIT: ParamsInit = {
+  TOKEN: undefined,
+  LIMIT: '20',
+  SERVER_URL: undefined,
+  DATABASE_HOST: undefined,
+  DATABASE_PORT: undefined,
+  DATABASE_NAME: undefined,
+  DATABASE_USERNAME: undefined,
+  DATABASE_PASSWORD: undefined,
+  ENCRYPT_KEY: undefined // 32 символа
+}
 
 checkEnvVariables(PARAMS_INIT)
 
