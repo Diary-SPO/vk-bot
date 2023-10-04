@@ -19,7 +19,7 @@
 Клонируйте этот репозиторий:
 
 ```sh
-git clone -b MainAlternative https://github.com/DIARY-SPO/vk-bot
+git clone https://github.com/DIARY-SPO/vk-bot
 ```
 
 Настройте свою копию проекта.

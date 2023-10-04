@@ -19,7 +19,7 @@ This project requires [Bun](https://bun.sh/) latest version.
 Clone this repository:
 
 ```sh
-git clone -b MainAlternative https://github.com/DIARY-SPO/vk-bot
+git clone https://github.com/DIARY-SPO/vk-bot
 ```
 
 Set up your copy of the project.
