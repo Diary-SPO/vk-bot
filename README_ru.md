@@ -19,7 +19,7 @@
 Клонируйте этот репозиторий:
 
 ```sh
-git clone -b MainAlternative https://github.com/DIARY-SPO/vk-bot
+git clone https://github.com/DIARY-SPO/vk-bot
 ```
 
 Настройте свою копию проекта.
@@ -34,8 +34,10 @@ git clone -b MainAlternative https://github.com/DIARY-SPO/vk-bot
 | DATABASE_HOST | 192.168.0.112 | Хост базы данных | Да |
 | DATABASE_PORT | 27017 | Порт от базы данных | Да |
 | DATABASE_NAME | bot | Имя базы данных | Да |
+| DATABASE_USERNAME | admin | Имя пользователя Базы Данных | Да |
+| DATABASE_PASSWORD | MyPassword! | Пароль от пользователя Базы Данных | Да |
 
-Пример корректно заполненного файла:
+Пример корректно заполненного файла (см. [.env.example](./.env.example)):
 
 ```sh
 SERVER_URL=https://poo.tomedu.ru/services/security
@@ -44,6 +46,8 @@ ENCRYPTED_KEY=jK309nA8XXk5IKm13XRkxJBXD15JHU8F
 DATABASE_HOST=192.168.0.112
 DATABASE_PORT=27017
 DATABASE_NAME=bot
+DATABASE_USERNAME=admin
+DATABASE_PASSWORD=MySuperPassword!
 LIMIT=20
 ```
 

@@ -19,7 +19,7 @@ This project requires [Bun](https://bun.sh/) latest version.
 Clone this repository:
 
 ```sh
-git clone -b MainAlternative https://github.com/DIARY-SPO/vk-bot
+git clone https://github.com/DIARY-SPO/vk-bot
 ```
 
 Set up your copy of the project.
@@ -34,8 +34,10 @@ To do this, create a **.env** file and specify the main parameters in it:
 | DATABASE_HOST | 192.168.0.112 | Database host | YES |
 | DATABASE_PORT | 27017 | Database port | YES |
 | DATABASE_NAME | bot | Database name | YES |
+| DATABASE_USERNAME | admin | Database User Name | Yes |
+| DATABASE_PASSWORD | MyPassword! | Password from the Database user | Yes |
 
-Example of a correctly filled file:
+Example of a correctly filled file  (see [.env.example](./.env.example)):
 
 ```dotenv
 SERVER_URL=https://poo.tomedu.ru/services/security
@@ -44,6 +46,8 @@ ENCRYPTED_KEY=jK309nA8XXk5IKm13XRkxJBXD15JHU8F
 DATABASE_HOST=mongodb://localhost:27017
 DATABASE_PORT=27017
 DATABASE_NAME=bot
+DATABASE_USERNAME=admin
+DATABASE_PASSWORD=MySuperPassword!
 LIMIT=20
 ```
 
