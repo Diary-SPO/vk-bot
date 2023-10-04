@@ -35,7 +35,7 @@ To do this, create a **.env** file and specify the main parameters in it:
 | DATABASE_PORT | 27017 | Database port | YES |
 | DATABASE_NAME | bot | Database name | YES |
 
-Example of a correctly filled file:
+Example of a correctly filled file  (see [.env.example](./.env.example)):
 
 ```dotenv
 SERVER_URL=https://poo.tomedu.ru/services/security
@@ -44,6 +44,8 @@ ENCRYPTED_KEY=jK309nA8XXk5IKm13XRkxJBXD15JHU8F
 DATABASE_HOST=mongodb://localhost:27017
 DATABASE_PORT=27017
 DATABASE_NAME=bot
+DATABASE_USERNAME=admin
+DATABASE_PASSWORD=MySuperPassword!
 LIMIT=20
 ```
 
