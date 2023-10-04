@@ -1,4 +1,7 @@
 import { type ParamsInit, type ParamsKeys } from './types'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 function checkEnvVariables (params: ParamsInit): void {
   for (const key of Object.keys(params) as ParamsKeys[]) {

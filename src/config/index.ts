@@ -1,13 +1,9 @@
 import fs from 'fs'
-import dotenv from 'dotenv'
 import { type ParamsInit } from './types'
 import checkEnvVariables from './utils'
 
-dotenv.config()
-
 if (!fs.existsSync('.env')) {
-  console.log('Отсутствует .env файл...')
-  process.exit()
+  throw new Error(`.env file not found.`)
 }
 
 const PARAMS_INIT: ParamsInit = {}
