@@ -22,7 +22,7 @@ const PARAMS_INIT: {[key: string]: string | number | undefined} = {
 
 Object.keys(PARAMS_INIT).forEach((index) => {
   PARAMS_INIT[index] = Bun.env?.[index] ?? process.env?.[index] ?? PARAMS_INIT[index]
-  if (!PARAMS_INIT[index]) throw new Error(`The field value is not filled in '${index}'! Specify a value other than undefined`)
+  if (!PARAMS_INIT[index]) throw new Error(`The value of the field '${index}' is not filled in the .env file! Specify a value other than undefined`)
 })
 
 export const { TOKEN, LIMIT, SERVER_URL, DATABASE_HOST, DATABASE_PORT, DATABASE_NAME, DATABASE_USERNAME, DATABASE_PASSWORD, ENCRYPT_KEY } = PARAMS_INIT
