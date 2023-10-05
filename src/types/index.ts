@@ -1,5 +1,6 @@
 import { type IContext, type ISessionContext } from '@vk-io/session'
 import { type Headers } from 'node-fetch'
+import { type DiaryUser } from './database'
 
 export interface CustomContext extends IContext {
   subTypes: string[]
@@ -19,24 +20,6 @@ export interface CustomContext extends IContext {
 export type CustomNext = () => void
 
 export type HTTPMethods = 'GET' | 'POST'
-
-export interface DiaryUser {
-  id: number
-  groupid: number
-  login: string
-  password: string
-  phone: string
-  birthday: string
-  firstname: string
-  lastname: string
-  middlename: string
-  cookie: string
-}
-
-export interface VKUser {
-  diaryid: number
-  vkid: number
-}
 
 export interface ApiResponse<T> {
   data: T

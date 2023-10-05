@@ -25,9 +25,9 @@ interface QueryBuilder<T> {
 
   delete: () => Promise<void>
 
-  insert: (data: Partial<T>) => Promise<void>
+  insert: (data: Partial<T>) => Promise<T | null>
 
-  update: (data: Partial<T>) => Promise<void>
+  update: (data: Partial<T>) => Promise<T | null>
 
   buildInsertQuery: (data: Partial<T>) => Promise<string>
 
@@ -72,11 +72,11 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
       return `INSERT INTO ${this.table} (${columns}) VALUES (${values})`
     },
 
-    async insert (data: Partial<T>): Promise<void> {
+    async insert (data: Partial<T>): Promise<T | null> {
       const columns = Object.keys(data).join(', ')
       const values = Object.values(data).map((value) => typeof value === 'string' ? `'${value}'` : value).join(', ')
       const query = `INSERT INTO ${this.table} (${columns}) VALUES (${values})`
-      await executeQuery(query)
+      return (await executeQuery<T>(query))[0] || null
     },
 
     async buildUpdateQuery (data: Partial<T>): Promise<string> {
@@ -92,8 +92,8 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
       return `UPDATE ${this.table} SET ${updateValues} WHERE ${this.conditions}`
     },
 
-    async update (data: Partial<T>): Promise<void> {
-      await executeQuery(await this.buildUpdateQuery(data))
+    async update (data: Partial<T>): Promise<T | null> {
+      return (await executeQuery<T>(await this.buildUpdateQuery(data)))[0] || null
     }
   }
 }
