@@ -1,6 +1,6 @@
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
-import { type DiaryUser } from '@src/types'
+import { type DiaryUser } from '@types'
 
 export default new StepScene('home', [
   async (context: MessageContext) => {
