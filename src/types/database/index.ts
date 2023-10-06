@@ -1,6 +1,6 @@
 export interface DiaryUser {
   id: number
-  spoid: number
+  spoid?: number
   groupid: number
   login: string
   password: string
@@ -16,7 +16,7 @@ export interface Group {
   id?: number
   groupname: string
   diarygroupid: number
-  spoid: number
+  spoid?: number
 }
 
 export interface SPO {

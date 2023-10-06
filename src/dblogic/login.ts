@@ -96,7 +96,7 @@ async function loginUser (login: string, password: string, vkid: number): Promis
     }
 
     // Если всё ок, вносим id группы в пользователя
-    regData.groupid = actualGroup.id
+    regData.groupid = actualGroup.id ?? -1 // <- ???
 
     // Дальше всё как обычно
     if (!existingDiaryUser) {
