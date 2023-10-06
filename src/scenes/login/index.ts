@@ -1,5 +1,5 @@
 import auth from '@src/dblogic/login'
-import { type DiaryUser } from '@src/types'
+import { type DiaryUser } from '@types'
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
 

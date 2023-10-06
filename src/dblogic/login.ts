@@ -1,12 +1,10 @@
-import { type DiaryUser, type VKUser, type SPO as SPO_type, type Group } from '@types/database'
+import { type DiaryUser, type VKUser, type SPO, type Group, type PersonResponse } from '@types'
 import { createQueryBuilder } from '@src/dblogic/sql/query'
 import crypto from '@src/dblogic/crypto'
 import fetcher from '@src/api/fetcher'
 import Hashes from 'jshashes'
 import { type UserData } from 'diary-shared'
-import { type PersonResponse } from '@src/types/database/Person'
 import { SERVER_URL } from '@config'
-import { IGetGroup, IGetSpo } from '@src/types/database'
 
 async function loginUser (login: string, password: string, vkid: number): Promise<DiaryUser | number> {
   const passwordHashed = new Hashes.SHA256().b64(password)
@@ -20,7 +18,7 @@ async function loginUser (login: string, password: string, vkid: number): Promis
 
   try {
     const student = res.data.tenants[res.data.tenantName].students[0]
-    const SPO     = res.data.tenants[res.data.tenantName].settings.organization
+    const SPO = res.data.tenants[res.data.tenantName].settings.organization
 
     const setCookieHeader = res.headers.get('Set-Cookie')
     const cookie = Array.isArray(setCookieHeader) ? setCookieHeader.join('; ') : setCookieHeader
@@ -45,7 +43,7 @@ async function loginUser (login: string, password: string, vkid: number): Promis
       cookie: crypto.encrypt(cookie ?? '')
     }
 
-    const regSPO: SPO_type = {
+    const regSPO: SPO = {
       abbreviation: SPO.abbreviation,
       name: SPO.name,
       shortname: SPO.shortName,
@@ -62,10 +60,10 @@ async function loginUser (login: string, password: string, vkid: number): Promis
       diarygroupid: student.groupId
     }
 
-    const groupQueryBuilder = createQueryBuilder<IGetGroup>()
+    const groupQueryBuilder = createQueryBuilder<Group>()
     const userDiaryQueryBuilder = createQueryBuilder<DiaryUser>()
     const userVKQueryBuilder = createQueryBuilder<VKUser>()
-    const SPOQueryBuilder = createQueryBuilder<IGetSpo>()
+    const SPOQueryBuilder = createQueryBuilder<SPO>()
 
     const existingGroup = await groupQueryBuilder.from('groups').select('*').where(`diarygroupid = ${regGroup.diarygroupid}`).first()
     const existingDiaryUser = await userDiaryQueryBuilder.from('diaryUser').select('*').where(`id = ${regData.id}`).first()
@@ -73,8 +71,8 @@ async function loginUser (login: string, password: string, vkid: number): Promis
     const existingSPO = await SPOQueryBuilder.from('spo').select('*').where(`name = '${regSPO.name}'`).first()
 
     // Здесь в итоге, после обновления или вставке, будут актуальные данные
-    const actualSPO: IGetSpo = regSPO
-    const actualGroup: IGetGroup = regGroup
+    const actualSPO: SPO = regSPO
+    const actualGroup: Group = regGroup
 
     if (!existingSPO) {
       const res = await SPOQueryBuilder.insert(regSPO)

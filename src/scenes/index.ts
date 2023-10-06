@@ -3,7 +3,7 @@ import { type CustomContext, type CustomNext } from '@types'
 import auth from '@src/dblogic/auth'
 
 const logger = (context: CustomContext, next: CustomNext): void => {
-  const type = (context.subTypes === 'message_edit'
+  const type = (context.subTypes.includes('message_edit')
     ? 'edit '
     : 'write') + `(messageId: ${context.id})`
 

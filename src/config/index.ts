@@ -3,7 +3,7 @@ import { type ParamsInit } from './types'
 import checkEnvVariables from './utils'
 
 if (!fs.existsSync('.env')) {
-  throw new Error(`.env file not found.`)
+  throw new Error('.env file not found.')
 }
 
 const PARAMS_INIT: ParamsInit = {
