@@ -9,7 +9,7 @@ import { SERVER_URL } from '@config'
 async function loginUser (login: string, password: string, vkid: number): Promise<DiaryUser | number> {
   const passwordHashed = new Hashes.SHA256().b64(password)
   const res = await fetcher<UserData>({
-    url: `${SERVER_URL}/login`,
+    url: `${SERVER_URL}/security/login`,
     method: 'POST',
     body: JSON.stringify({ login, password: passwordHashed, isRemember: true })
   })
@@ -24,7 +24,7 @@ async function loginUser (login: string, password: string, vkid: number): Promis
     const cookie = Array.isArray(setCookieHeader) ? setCookieHeader.join('; ') : setCookieHeader
 
     const detailedInfo = await fetcher<PersonResponse>({
-      url: `${SERVER_URL}/account-settings`,
+      url: `${SERVER_URL}/security/account-settings`,
       cookie: cookie ?? ''
     })
 
@@ -68,7 +68,7 @@ async function loginUser (login: string, password: string, vkid: number): Promis
     const existingGroup = await groupQueryBuilder.from('groups').select('*').where(`diarygroupid = ${regGroup.diarygroupid}`).first()
     const existingDiaryUser = await userDiaryQueryBuilder.from('diaryUser').select('*').where(`id = ${regData.id}`).first()
     const existingVKUser = await userVKQueryBuilder.from('VKUser').select('*').where(`vkid = ${vkid}`).first()
-    const existingSPO = await SPOQueryBuilder.from('spo').select('*').where(`name = '${regSPO.name}'`).first()
+    const existingSPO = await SPOQueryBuilder.from('spo').select('*').where(`abbreviation = '${regSPO.abbreviation}'`).first()
 
     // Здесь в итоге, после обновления или вставке, будут актуальные данные
     const actualSPO: SPO = regSPO
@@ -87,7 +87,6 @@ async function loginUser (login: string, password: string, vkid: number): Promis
 
     if (!existingGroup) {
       const res = await groupQueryBuilder.insert(regGroup)
-      console.log(res)
       if (!res) throw new Error('Error insert group')
       actualGroup.id = res.id
     } else {

@@ -63,3 +63,33 @@ export interface PersonResponse {
     trusted: boolean
   }
 }
+
+export interface Schedule {
+  id: number
+  groupid: number
+  teacherid: number
+  classroombuilding: string
+  classroomname: string
+  subjectname: string
+  date: Date
+  starttime: string
+  endtime: string
+  gradebook: Gradebook
+}
+
+interface Gradebook {
+  id: number
+  lessontype: string
+  themes: string[]
+  tasks: Task[]
+}
+
+interface Task {
+  id: number
+  tasktype: string
+  required: boolean
+}
+
+export interface UserSchedule {
+  schedule: Schedule[]
+}

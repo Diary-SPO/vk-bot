@@ -75,7 +75,7 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
     async insert (data: Partial<T>): Promise<T | null> {
       const columns = Object.keys(data).join(', ')
       const values = Object.values(data).map((value) => typeof value === 'string' ? `'${value}'` : value).join(', ')
-      const query = `INSERT INTO ${this.table} (${columns}) VALUES (${values})`
+      const query = `INSERT INTO ${this.table} (${columns}) VALUES (${values}) RETURNING *`
       return (await executeQuery<T>(query))[0] || null
     },
 

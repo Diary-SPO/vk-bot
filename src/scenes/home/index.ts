@@ -29,7 +29,7 @@ export default new StepScene('home', [
         break
       }
       case 'schedule': {
-        await context.send('Скоро будет...')
+        return context.scene.enter('schedule')
         break
       }
       case 'marks': {
