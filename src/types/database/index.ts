@@ -93,3 +93,42 @@ interface Task {
 export interface UserSchedule {
   schedule: Schedule[]
 }
+
+export interface IGetSchedule {
+  date: string
+  lessons: {
+    [key: number]: {
+      endTime: string
+      startTime: string
+      name?: string
+      timetable?: {
+        classroom?: {
+          building?: string
+          name?: string
+          id: number
+        }
+        teacher?: {
+          firstName: string
+          lastName: string
+          middleName: string
+          id: number
+        }
+      }
+      gradebook?: {
+        id: number
+        lessonType: string
+        tasks?: [
+          {
+            attachments?: []
+            id: number
+            isRequired: boolean
+            mark: string
+            topic: string
+            type: string
+          }
+        ]
+        themes?: string[]
+      }
+    }
+  }
+}
