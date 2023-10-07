@@ -21,7 +21,7 @@ export const auth = async (context: CustomContext): Promise<boolean> => {
     const diaryUser = await diaryUserQueryBuilder
       .from('diaryUser')
       .select('*')
-      .where(`id = ${user.diaryid}`)
+      .where(`id = ${user.diaryId}`)
       .first()
 
     if (!diaryUser) return false

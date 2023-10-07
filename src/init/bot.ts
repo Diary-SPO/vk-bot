@@ -6,7 +6,7 @@ import { SceneManager } from '@vk-io/scenes'
 import scenes from '@src/init/scenes'
 
 const vk = new VK({
-  token: String(TOKEN),
+  token: TOKEN,
   apiLimit: Number(LIMIT)
 })
 

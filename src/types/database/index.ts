@@ -1,22 +1,21 @@
-// TODO: привести все к одному типу likeThisStyle (ВЕЗДЕ!)
 export interface DiaryUser {
   id: number
-  spoid?: number
-  groupid: number
+  spoId?: number
+  groupId: number
   login: string
   password: string
   phone: string
   birthday: string
-  firstname: string
-  lastname: string
-  middlename: string
+  firstName: string
+  lastName: string
+  middleName: string
   cookie: string
 }
 
 export interface Group {
   id?: number
-  groupname: string
-  diarygroupid: number
+  groupName: string
+  diaryGroupId: number
   spoid?: number
 }
 
@@ -24,18 +23,18 @@ export interface SPO {
   id?: number
   abbreviation: string
   name: string
-  shortname: string
-  actualaddress: string
+  shortName: string
+  actualAddress: string
   email: string
   site: string
   phone: string
   type: string
-  directorname: string
+  directorName: string
 }
 
 export interface VKUser {
-  diaryid: number
-  vkid: number
+  diaryId: number
+  vkId: number
 }
 
 export interface PersonResponse {

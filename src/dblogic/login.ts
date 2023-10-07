@@ -6,7 +6,7 @@ import Hashes from 'jshashes'
 import { type UserData } from 'diary-shared'
 import { SERVER_URL } from '@config'
 
-export const login = async (login: string, password: string, vkid: number): Promise<DiaryUser | number> => {
+export const login = async (login: string, password: string, vkId: number): Promise<DiaryUser | number> => {
   const passwordHashed = new Hashes.SHA256().b64(password)
   const res = await fetcher<UserData>({
     url: `${SERVER_URL}/security/login`,
@@ -32,32 +32,32 @@ export const login = async (login: string, password: string, vkid: number): Prom
 
     const regData: DiaryUser = {
       id: student.id,
-      groupid: student.groupId,
+      groupId: student.groupId,
       login,
       password: crypto.encrypt(password ?? ''),
       phone: detailedInfo.data.person.phone,
       birthday: detailedInfo.data.person.birthday,
-      firstname: detailedInfo.data.person.firstName,
-      lastname: detailedInfo.data.person.lastName,
-      middlename: detailedInfo.data.person.middleName,
+      firstName: detailedInfo.data.person.firstName,
+      lastName: detailedInfo.data.person.lastName,
+      middleName: detailedInfo.data.person.middleName,
       cookie: crypto.encrypt(cookie ?? '')
     }
 
     const regSPO: SPO = {
       abbreviation: SPO.abbreviation,
       name: SPO.name,
-      shortname: SPO.shortName,
-      actualaddress: SPO.actualAddress,
+      shortName: SPO.shortName,
+      actualAddress: SPO.actualAddress,
       email: SPO.email,
       site: SPO.site,
       phone: SPO.phone,
       type: SPO.type,
-      directorname: SPO.directorName
+      directorName: SPO.directorName
     }
 
     const regGroup: Group = {
-      groupname: student.groupName,
-      diarygroupid: student.groupId
+      groupName: student.groupName,
+      diaryGroupId: student.groupId
     }
 
     const groupQueryBuilder = createQueryBuilder<Group>()
@@ -65,12 +65,11 @@ export const login = async (login: string, password: string, vkid: number): Prom
     const userVKQueryBuilder = createQueryBuilder<VKUser>()
     const SPOQueryBuilder = createQueryBuilder<SPO>()
 
-    const existingGroup = await groupQueryBuilder.from('groups').select('*').where(`diarygroupid = ${regGroup.diarygroupid}`).first()
+    const existingGroup = await groupQueryBuilder.from('groups').select('*').where(`diarygroupid = ${regGroup.diaryGroupId}`).first()
     const existingDiaryUser = await userDiaryQueryBuilder.from('diaryUser').select('*').where(`id = ${regData.id}`).first()
-    const existingVKUser = await userVKQueryBuilder.from('VKUser').select('*').where(`vkid = ${vkid}`).first()
+    const existingVKUser = await userVKQueryBuilder.from('VKUser').select('*').where(`vkid = ${vkId}`).first()
     const existingSPO = await SPOQueryBuilder.from('spo').select('*').where(`abbreviation = '${regSPO.abbreviation}'`).first()
 
-    // Здесь в итоге, после обновления или вставке, будут актуальные данные
     const actualSPO: SPO = regSPO
     const actualGroup: Group = regGroup
 
@@ -83,7 +82,7 @@ export const login = async (login: string, password: string, vkid: number): Prom
       actualSPO.id = existingSPO.id
     }
     regGroup.spoid = actualSPO.id
-    regData.spoid = actualSPO.id
+    regData.spoId = actualSPO.id
 
     if (!existingGroup) {
       const res = await groupQueryBuilder.insert(regGroup)
@@ -95,7 +94,7 @@ export const login = async (login: string, password: string, vkid: number): Prom
     }
 
     // Если всё ок, вносим id группы в пользователя
-    regData.groupid = actualGroup.id ?? -1 // <- ???
+    regData.groupId = actualGroup.id ?? -1 // <- ???
 
     // Дальше всё как обычно
     if (!existingDiaryUser) {
@@ -105,9 +104,9 @@ export const login = async (login: string, password: string, vkid: number): Prom
     }
 
     if (!existingVKUser) {
-      await userVKQueryBuilder.insert({ diaryid: regData.id, vkid })
+      await userVKQueryBuilder.insert({ diaryId: regData.id, vkId })
     } else {
-      await userVKQueryBuilder.update({ diaryid: regData.id, vkid })
+      await userVKQueryBuilder.update({ diaryId: regData.id, vkId })
     }
 
     return regData

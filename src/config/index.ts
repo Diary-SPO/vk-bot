@@ -7,14 +7,14 @@ if (!fs.existsSync('.env')) {
 }
 
 const PARAMS_INIT: ParamsInit = {
-  TOKEN: undefined,
+  TOKEN: '',
   LIMIT: '20',
-  SERVER_URL: undefined,
-  DATABASE_HOST: undefined,
-  DATABASE_PORT: undefined,
-  DATABASE_NAME: undefined,
-  DATABASE_USERNAME: undefined,
-  DATABASE_PASSWORD: undefined,
+  SERVER_URL: '',
+  DATABASE_HOST: '',
+  DATABASE_PORT: '',
+  DATABASE_NAME: '',
+  DATABASE_USERNAME: '',
+  DATABASE_PASSWORD: '',
   ENCRYPT_KEY: '' // 32 символа
 }
 
