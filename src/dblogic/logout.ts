@@ -1,6 +1,6 @@
 import { createQueryBuilder } from './sql/query'
 
-export default async (vkId: number): Promise<void> => {
+export const logout = async (vkId: number): Promise<void> => {
   try {
     const userVKQueryBuilder = createQueryBuilder()
 

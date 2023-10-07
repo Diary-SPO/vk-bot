@@ -1,5 +1,5 @@
 import { type CustomContext, type VKUser, type DiaryUser } from '@types'
-import { decryptData, createQueryBuilder } from '@src/dblogic/sql'
+import { decryptData, createQueryBuilder } from '@src/dblogic'
 
 export default async (context: CustomContext): Promise<boolean> => {
   const { session } = context

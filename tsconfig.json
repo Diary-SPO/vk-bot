@@ -26,6 +26,7 @@
       "@src/*": ["src/*"],
       "@config": ["src/config"],
       "@types": ["src/types"],
+      "@utils": ["src/utils"],
     }
   },
   "include": [

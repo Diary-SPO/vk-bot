@@ -30,7 +30,6 @@ export default new StepScene('home', [
       }
       case 'schedule': {
         return context.scene.enter('schedule')
-        break
       }
       case 'marks': {
         await context.send('Скоро будет...')

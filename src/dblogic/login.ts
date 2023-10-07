@@ -1,12 +1,12 @@
 import { type DiaryUser, type VKUser, type SPO, type Group, type PersonResponse } from '@types'
-import { createQueryBuilder } from '@src/dblogic/sql/query'
+import { createQueryBuilder } from '@src/dblogic'
 import crypto from '@src/dblogic/crypto'
 import fetcher from '@src/api/fetcher'
 import Hashes from 'jshashes'
 import { type UserData } from 'diary-shared'
 import { SERVER_URL } from '@config'
 
-async function loginUser (login: string, password: string, vkid: number): Promise<DiaryUser | number> {
+export const login = async (login: string, password: string, vkid: number): Promise<DiaryUser | number> => {
   const passwordHashed = new Hashes.SHA256().b64(password)
   const res = await fetcher<UserData>({
     url: `${SERVER_URL}/security/login`,
@@ -119,5 +119,3 @@ async function loginUser (login: string, password: string, vkid: number): Promis
   // 501 - сервер упал.
   // 1   - неизвестная ошибка
 }
-
-export default loginUser

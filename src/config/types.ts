@@ -7,7 +7,7 @@ export interface ParamsInit {
   DATABASE_NAME?: string
   DATABASE_USERNAME?: string
   DATABASE_PASSWORD?: string
-  ENCRYPT_KEY?: string // 32 символа
+  ENCRYPT_KEY: string // 32 символа
 }
 
 export type ParamsKeys = keyof ParamsInit

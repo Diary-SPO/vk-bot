@@ -1,6 +1,6 @@
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
-import logout from '@src/dblogic/logout'
+import { logout } from '@src/dblogic'
 
 export default new StepScene('settings', [
   async (context: MessageContext) => {

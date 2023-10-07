@@ -1,5 +1,5 @@
 import crypto from '@src/dblogic/crypto'
-import { client } from '@src/init/connectdb.ts'
+import { client } from '@src/init/connectdb'
 
 async function executeQuery<T> (query: string): Promise<T[]> {
   const result = await client.query(query)

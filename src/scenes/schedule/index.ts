@@ -9,7 +9,7 @@ export default new StepScene('schedule', [
       await context.send('🚴‍♂ Расписание загружается...')
       context.scene.state.selectDate = new Date()
     }
-    // Загружаем расписание
+
     await schedule(session.diaryUser.id, new Date(), false, session.diaryUser.cookie)
   }
 ])

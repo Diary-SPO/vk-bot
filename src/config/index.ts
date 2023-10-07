@@ -15,7 +15,7 @@ const PARAMS_INIT: ParamsInit = {
   DATABASE_NAME: undefined,
   DATABASE_USERNAME: undefined,
   DATABASE_PASSWORD: undefined,
-  ENCRYPT_KEY: undefined // 32 символа
+  ENCRYPT_KEY: '' // 32 символа
 }
 
 checkEnvVariables(PARAMS_INIT)

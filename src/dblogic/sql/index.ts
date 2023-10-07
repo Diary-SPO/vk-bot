@@ -1,1 +1,1 @@
-export * from './query.ts'
+export * from './query'

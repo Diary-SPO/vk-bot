@@ -1,6 +1,6 @@
 import { VK } from 'vk-io'
 import { LIMIT, TOKEN } from '@config'
-import { scenesHandler, logger } from '@src/scenes'
+import { scenesHandler, logger } from '@utils'
 import { SessionManager } from '@vk-io/session'
 import { SceneManager } from '@vk-io/scenes'
 import scenes from '@src/init/scenes'
