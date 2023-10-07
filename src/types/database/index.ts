@@ -50,3 +50,15 @@ export interface PersonResponse {
     trusted: boolean
   }
 }
+
+export interface Schedule {
+  id: number
+  groupId: number
+  teacherId: number | null
+  classroomBuilding: string | null
+  classroomName: string | null
+  subjectName: string
+  date: Date
+  startTime: string
+  endTime: string
+}

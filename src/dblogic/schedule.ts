@@ -2,12 +2,15 @@ import { createQueryBuilder } from './sql'
 import fetcher from '@src/api/fetcher'
 import { SERVER_URL } from '@src/config'
 import { type Day } from 'diary-shared'
+import { type Schedule } from '@types'
+import { checkOrAddTeacher } from './schedule/' // <- Именно директорию, НЕ ФАЙЛ
 
+// TODO: Обернуть в try / catch
 export const schedule = async (diaryId: number, date: Date, localCache: boolean, cookie: string): Promise<unknown> => {
   const dateString = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + (date.getDay())).slice(-2)}`
 
   if (localCache) {
-    const scheduleBuilder = createQueryBuilder<unknown>()
+    const scheduleBuilder = createQueryBuilder<unknown>() // TODO: обобщить builder'ы, чтобы по сто раз не создавать
   }
 
   const res = await fetcher<Day[]>({
@@ -18,6 +21,30 @@ export const schedule = async (diaryId: number, date: Date, localCache: boolean,
   // TODO: Доделать :)
   if (typeof res === 'number') return res
 
-  const lessons = res.data[0]
-  console.log(lessons)
+  const day = res.data[0]
+  console.log(day)
+
+  // TODO: разбить подзадачи на функции, чтобы легче читалось
+  day.lessons?.forEach(async (lesson) => {
+    if (lesson?.name) {
+      // Членим на части, с которыми можем работать
+      // В начале проверяем наличие самого schedule
+      const scheduleQueryBuilder = createQueryBuilder<Schedule>();
+
+      const scheduleQuery = scheduleQueryBuilder
+      .from('schedule')
+      .select('*')
+      .where(`"date" = ${day.date} and "startTime" = '${lesson.startTime}' and "endTime" = '${lesson.endTime}'`)
+
+      const scheduleExisting = scheduleQuery.first()
+
+      if (!scheduleExisting) {
+        // Вставляем данные
+        // TODO: перед эим нужен id группы и id преподавателя
+        const teacherId = await checkOrAddTeacher()
+        /*const insertSchedule = {
+        } = lesson*/
+      }
+    }
+  })
 }

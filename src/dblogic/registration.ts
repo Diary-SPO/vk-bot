@@ -6,7 +6,7 @@ import Hashes from 'jshashes'
 import { type UserData } from 'diary-shared'
 import { SERVER_URL } from '@config'
 
-export const login = async (login: string, password: string, vkId: number): Promise<DiaryUser | number> => {
+export const registration = async (login: string, password: string, vkId: number): Promise<DiaryUser | number> => {
   const passwordHashed = new Hashes.SHA256().b64(password)
   const res = await fetcher<UserData>({
     url: `${SERVER_URL}/security/login`,

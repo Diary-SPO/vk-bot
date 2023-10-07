@@ -1,4 +1,4 @@
-import { login } from '@src/dblogic'
+import { registration } from '@src/dblogic'
 import { type DiaryUser } from '@types'
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
@@ -125,9 +125,9 @@ export default new StepScene('login', [
 
     const message = await context.send('😼 Авторизирую...')
     const password = context.scene.state.password
-    const userLogin = context.scene.state.login
+    const login = context.scene.state.login
 
-    const res = await login(userLogin, password, context.senderId)
+    const res = await registration(login, password, context.senderId)
 
     switch (res) {
       case 1: {
