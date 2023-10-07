@@ -10,6 +10,6 @@ export default new StepScene('schedule', [
       context.scene.state.selectDate = new Date()
     }
     // Загружаем расписание
-    schedule(session.diaryUser.id, new Date(), false, session.diaryUser.cookie)
+    await schedule(session.diaryUser.id, new Date(), false, session.diaryUser.cookie)
   }
 ])
