@@ -1,5 +1,5 @@
 import type { CustomContext, CustomNext } from '@types'
-import auth from '@src/dblogic/auth'
+import { auth } from '@src/dblogic'
 import c from 'colors'
 
 const logger = (context: CustomContext, next: CustomNext): void => {

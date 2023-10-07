@@ -1,4 +1,4 @@
-import { createQueryBuilder } from '@src/dblogic'
+import { createQueryBuilder } from './sql'
 import fetcher from '@src/api/fetcher'
 import { SERVER_URL } from '@src/config'
 import { type Day } from 'diary-shared'

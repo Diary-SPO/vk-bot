@@ -1,6 +1,6 @@
 import { type DiaryUser, type VKUser, type SPO, type Group, type PersonResponse } from '@types'
-import { createQueryBuilder } from '@src/dblogic'
-import crypto from '@src/dblogic/crypto'
+import { createQueryBuilder } from './sql'
+import crypto from './crypto'
 import fetcher from '@src/api/fetcher'
 import Hashes from 'jshashes'
 import { type UserData } from 'diary-shared'
