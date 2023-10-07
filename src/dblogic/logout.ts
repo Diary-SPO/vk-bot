@@ -5,8 +5,8 @@ export const logout = async (vkId: number): Promise<void> => {
     const userVKQueryBuilder = createQueryBuilder()
 
     await userVKQueryBuilder
-      .from('VKUser')
-      .where(`vkid = ${vkId}`)
+      .from('vkUser')
+      .where(`"vkId" = ${vkId}`)
       .delete()
   } catch (error) {
     console.error('Ошибка при удалении записи:', error)

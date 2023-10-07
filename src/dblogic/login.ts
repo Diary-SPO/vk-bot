@@ -65,10 +65,10 @@ export const login = async (login: string, password: string, vkId: number): Prom
     const userVKQueryBuilder = createQueryBuilder<VKUser>()
     const SPOQueryBuilder = createQueryBuilder<SPO>()
 
-    const existingGroup = await groupQueryBuilder.from('groups').select('*').where(`diarygroupid = ${regGroup.diaryGroupId}`).first()
+    const existingGroup = await groupQueryBuilder.from('groups').select('*').where(`"diaryGroupId" = ${regGroup.diaryGroupId}`).first()
     const existingDiaryUser = await userDiaryQueryBuilder.from('diaryUser').select('*').where(`id = ${regData.id}`).first()
-    const existingVKUser = await userVKQueryBuilder.from('VKUser').select('*').where(`vkid = ${vkId}`).first()
-    const existingSPO = await SPOQueryBuilder.from('spo').select('*').where(`abbreviation = '${regSPO.abbreviation}'`).first()
+    const existingVKUser = await userVKQueryBuilder.from('vkUser').select('*').where(`"vkId" = ${vkId}`).first()
+    const existingSPO = await SPOQueryBuilder.from('SPO').select('*').where(`abbreviation = '${regSPO.abbreviation}'`).first()
 
     const actualSPO: SPO = regSPO
     const actualGroup: Group = regGroup
@@ -81,7 +81,7 @@ export const login = async (login: string, password: string, vkId: number): Prom
       await SPOQueryBuilder.update(regSPO)
       actualSPO.id = existingSPO.id
     }
-    regGroup.spoid = actualSPO.id
+    regGroup.spoId = actualSPO.id
     regData.spoId = actualSPO.id
 
     if (!existingGroup) {

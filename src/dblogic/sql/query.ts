@@ -2,6 +2,7 @@ import crypto from '@src/dblogic/crypto'
 import { client } from '@src/init/connectdb'
 
 async function executeQuery<T> (query: string): Promise<T[]> {
+  console.log(query)
   const result = await client.query(query)
   return result.rows
 }
@@ -56,13 +57,13 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
     },
 
     async first (): Promise<T | null> {
-      const query = `SELECT ${this.columns.join(', ')} FROM ${this.table} WHERE ${this.conditions} LIMIT 1`
+      const query = `SELECT ${this.columns.join(`, `)} FROM "${this.table}" WHERE ${this.conditions} LIMIT 1`
       const result = await executeQuery<T>(query)
       return result[0] || null
     },
 
     async delete (): Promise<void> {
-      const query = `DELETE FROM ${this.table} WHERE ${this.conditions}`
+      const query = `DELETE FROM "${this.table}" WHERE ${this.conditions}`
       await executeQuery(query)
     },
 
@@ -73,9 +74,9 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
     },
 
     async insert (data: Partial<T>): Promise<T | null> {
-      const columns = Object.keys(data).join(', ')
+      const columns = `"${Object.keys(data).join(`", "`)}"`
       const values = Object.values(data).map((value) => typeof value === 'string' ? `'${value}'` : value).join(', ')
-      const query = `INSERT INTO ${this.table} (${columns}) VALUES (${values}) RETURNING *`
+      const query = `INSERT INTO "${this.table}" (${columns}) VALUES (${values}) RETURNING *`
       return (await executeQuery<T>(query))[0] || null
     },
 
@@ -83,13 +84,13 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
       const updateValues = Object.entries(data)
         .map(([column, value]) => {
           if (typeof value === 'string') {
-            return `${column} = '${value}'`
+            return `"${column}" = '${value}'`
           }
-          return `${String(column)} = ${String(value)}`
+          return `"${String(column)}" = ${String(value)}`
         })
         .join(', ')
 
-      return `UPDATE ${this.table} SET ${updateValues} WHERE ${this.conditions}`
+      return `UPDATE "${this.table}" SET ${updateValues} WHERE ${this.conditions}`
     },
 
     async update (data: Partial<T>): Promise<T | null> {

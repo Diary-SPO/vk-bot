@@ -16,7 +16,7 @@ export interface Group {
   id?: number
   groupName: string
   diaryGroupId: number
-  spoid?: number
+  spoId?: number
 }
 
 export interface SPO {

@@ -10,9 +10,9 @@ export const auth = async (context: CustomContext): Promise<boolean> => {
   try {
     const queryBuilder = createQueryBuilder<VKUser>()
     const user = await queryBuilder
-      .from('VKUser')
+      .from('vkUser')
       .select('*')
-      .where(`vkid = ${vkid}`)
+      .where(`"vkId" = ${vkid}`)
       .first()
 
     if (!user) return false
@@ -21,7 +21,7 @@ export const auth = async (context: CustomContext): Promise<boolean> => {
     const diaryUser = await diaryUserQueryBuilder
       .from('diaryUser')
       .select('*')
-      .where(`id = ${user.diaryId}`)
+      .where(`"id" = ${user.diaryId}`)
       .first()
 
     if (!diaryUser) return false
