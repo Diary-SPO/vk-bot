@@ -1,16 +1,13 @@
-import { createQueryBuilder } from './sql'
-import fetcher from '@src/api/fetcher'
-import { SERVER_URL } from '@src/config'
-import { type Day } from 'diary-shared'
-import { type Schedule } from '@types'
-import { checkOrAddTeacher } from './schedule/' // <- Именно директорию, НЕ ФАЙЛ
+import { DiaryUser, type Schedule } from '@types'
+import { getScheduleFromDatabase, getScheduleFromNetworkCity } from './tables'
 
 // TODO: Обернуть в try / catch
-export const schedule = async (diaryId: number, date: Date, localCache: boolean, cookie: string): Promise<unknown> => {
-  const dateString = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + (date.getDay())).slice(-2)}`
-
-  if (localCache) {
-    const scheduleBuilder = createQueryBuilder<unknown>() // TODO: обобщить builder'ы, чтобы по сто раз не создавать
+export const schedule = async (diaryUser: DiaryUser, date: Date, localCache: boolean, cookie: string): Promise<unknown> => {
+  //const dateString = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + (date.getDay())).slice(-2)}`
+  if (localCache) return getScheduleFromDatabase(diaryUser, date)
+  else return getScheduleFromNetworkCity(diaryUser, date, cookie)
+  /*if (localCache) {
+    return scheduleDatabase.get(Date)
   }
 
   const res = await fetcher<Day[]>({
@@ -43,8 +40,8 @@ export const schedule = async (diaryId: number, date: Date, localCache: boolean,
         // TODO: перед эим нужен id группы и id преподавателя
         const teacherId = await checkOrAddTeacher()
         /*const insertSchedule = {
-        } = lesson*/
+        } = lesson
       }
     }
-  })
+  })*/
 }

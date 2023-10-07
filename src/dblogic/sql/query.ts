@@ -90,7 +90,7 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
         })
         .join(', ')
 
-      return `UPDATE "${this.table}" SET ${updateValues} WHERE ${this.conditions}`
+      return `UPDATE "${this.table}" SET ${updateValues} WHERE ${this.conditions} RETURNING *`
     },
 
     async update (data: Partial<T>): Promise<T | null> {

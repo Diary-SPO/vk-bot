@@ -15,7 +15,7 @@ export default new StepScene('home', [
         const user = session.diaryUser as DiaryUser
         const date = new Date(user.birthday)
         await context.send(
-          `👤 ${user.lastname} ${user.firstname} ${user.middlename}` +
+          `👤 ${user.lastName} ${user.firstName} ${user.middleName}` +
           `\n👉 ${date.getUTCDate()} лет` +
           `\n📱 ${user.phone}`
         )

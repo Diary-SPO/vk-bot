@@ -1,3 +1,4 @@
+import { Teacher } from "diary-shared";
 export interface DiaryUser {
   id: number
   spoId?: number
@@ -52,8 +53,8 @@ export interface PersonResponse {
 }
 
 export interface Schedule {
-  id: number
-  groupId: number
+  id?: number
+  groupId?: number
   teacherId: number | null
   classroomBuilding: string | null
   classroomName: string | null
@@ -61,4 +62,8 @@ export interface Schedule {
   date: Date
   startTime: string
   endTime: string
+}
+
+export interface TeacherDB extends Teacher {
+  spoId: number
 }
