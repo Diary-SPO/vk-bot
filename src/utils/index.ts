@@ -1,6 +1,7 @@
 import type { CustomContext, CustomNext } from '@types'
 import { auth } from '@src/dblogic'
 import c from 'colors'
+import { exit } from 'process'
 
 const logger = (context: CustomContext, next: CustomNext): void => {
   const type = (context.subTypes.includes('message_edit')

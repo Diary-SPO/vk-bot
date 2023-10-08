@@ -1,12 +1,12 @@
-import { DiaryUser, type Schedule } from '@types'
+import { type DiaryUser, type Schedule } from '@types'
 import { getScheduleFromDatabase, getScheduleFromNetworkCity } from './tables'
 
 // TODO: Обернуть в try / catch
 export const schedule = async (diaryUser: DiaryUser, date: Date, localCache: boolean, cookie: string): Promise<unknown> => {
-  //const dateString = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + (date.getDay())).slice(-2)}`
+  // const dateString = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + (date.getDay())).slice(-2)}`
   if (localCache) return getScheduleFromDatabase(diaryUser, date)
-  else return getScheduleFromNetworkCity(diaryUser, date, cookie)
-  /*if (localCache) {
+  else return await getScheduleFromNetworkCity(diaryUser, date, cookie)
+  /* if (localCache) {
     return scheduleDatabase.get(Date)
   }
 
@@ -43,5 +43,5 @@ export const schedule = async (diaryUser: DiaryUser, date: Date, localCache: boo
         } = lesson
       }
     }
-  })*/
+  }) */
 }

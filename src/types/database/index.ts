@@ -1,4 +1,4 @@
-import { Teacher } from "diary-shared";
+import { type Teacher } from 'diary-shared'
 export interface DiaryUser {
   id: number
   spoId?: number

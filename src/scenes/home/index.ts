@@ -5,7 +5,7 @@ import { type DiaryUser } from '@types'
 export default new StepScene('home', [
   async (context: MessageContext) => {
     const { session } = context
-    if (context.scene.step.firstTime || !context.text) {
+    if ((context.scene.step.firstTime || !context.text) && !context?.messagePayload?.command) {
       await context.send('Приветики! Ты в главном меню!')
     }
 
