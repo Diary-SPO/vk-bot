@@ -10,8 +10,8 @@ const getScheduleFromDatabase = (diaryUser: DiaryUser, date: Date): Lesson | nul
 }
 
 const getScheduleFromNetworkCity = async (diaryUser: DiaryUser, date: Date, cookie: string): Promise<Day | number | null> => {
-  const dateString = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + (date.getDay() + 1)).slice(-2)}`
-
+  const dateString = date.toJSON().split('T')[0]
+  console.log(dateString)
   const daysActual = await fetcher<Day[]>({
     url: `${SERVER_URL}/students/${diaryUser.id}/lessons/${dateString}/${dateString}`,
     method: 'GET',

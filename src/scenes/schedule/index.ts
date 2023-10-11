@@ -21,7 +21,7 @@ export default new StepScene('schedule', [
     }
 
     await context.send({
-      message: 'Текущая дата: ' + date.toDateString(),
+      message: 'Текущая дата: ' + date.toJSON().split('T')[0],
       keyboard: Keyboard.builder().textButton({
         label: '📅 <-',
         payload: {

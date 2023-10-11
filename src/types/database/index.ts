@@ -59,11 +59,28 @@ export interface Schedule {
   classroomBuilding: string | null
   classroomName: string | null
   subjectName: string
-  date: Date
+  date: string
   startTime: string
   endTime: string
 }
 
 export interface TeacherDB extends Teacher {
   spoId: number
+}
+
+export interface GradebookDB {
+  id?: number
+  scheduleId: number
+  lessonTypeId: number
+}
+
+export interface LessonTypeDB {
+  id?: number
+  name: string
+}
+
+export interface ThemeDB {
+  id?: number
+  gradebookId: number
+  description: string
 }

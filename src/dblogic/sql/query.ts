@@ -24,6 +24,8 @@ interface QueryBuilder<T> {
 
   first: () => Promise<T | null>
 
+  all: () => Promise<T[] | null>
+
   delete: () => Promise<void>
 
   insert: (data: Partial<T>) => Promise<T | null>
@@ -57,9 +59,15 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
     },
 
     async first (): Promise<T | null> {
+      const result = await this.all()
+      if (result === null || result.length === 0) return null
+      return result[0]
+    },
+
+    async all(): Promise<T[] | null> {
       const query = `SELECT ${this.columns.join(', ')} FROM "${this.table}" WHERE ${this.conditions} LIMIT 1`
       const result = await executeQuery<T>(query)
-      return result[0] || null
+      return result || null
     },
 
     async delete (): Promise<void> {

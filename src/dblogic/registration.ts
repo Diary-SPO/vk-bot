@@ -109,6 +109,8 @@ export const registration = async (login: string, password: string, vkId: number
       await userVKQueryBuilder.update({ diaryId: regData.id, vkId })
     }
 
+    regData.cookie = crypto.decrypt(regData.cookie)
+
     return regData
   } catch (error) {
     console.log('Ошибка авторизации:', error)
