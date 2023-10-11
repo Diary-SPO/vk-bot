@@ -56,7 +56,7 @@ export const save = async (schedule: Day, diaryUser: DiaryUser) => {
     }
 
     if (lesson?.gradebook) {
-      gradebookSave(lesson.gradebook, thisSchedule)
+      gradebookSave(lesson.gradebook, thisSchedule, diaryUser.id)
     }
 
     // Если дошли до сюда, то круто. Дальше - легче, но затратно: обновляем темы, таски, оценки

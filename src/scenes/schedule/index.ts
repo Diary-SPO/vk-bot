@@ -17,6 +17,9 @@ export default new StepScene('schedule', [
       } break
       case 'prev': {
         date.setDate(date.getDate() - 1)
+      } break
+      case 'return': {
+        return context.scene.enter('home')
       }
     }
 

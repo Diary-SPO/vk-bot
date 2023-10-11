@@ -84,3 +84,16 @@ export interface ThemeDB {
   gradebookId: number
   description: string
 }
+
+export interface TaskDB {
+  id: number,
+  gradebookId: number,
+  taskTypeId: number,
+  topic: string
+}
+
+export interface RequiredDB {
+  diaryUserId: number
+  taskId: number
+  isRequired: boolean
+}

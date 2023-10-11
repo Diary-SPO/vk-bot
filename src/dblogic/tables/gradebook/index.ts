@@ -1,9 +1,9 @@
-import { GradebookDB, Schedule, ThemeDB } from "@src/types"
+import { GradebookDB, RequiredDB, Schedule, TaskDB, ThemeDB } from "@src/types"
 import { Gradebook } from "diary-shared"
-import { lessonTypeGetId } from ".."
+import { getTaskTypeId, lessonTypeGetId } from ".."
 import { createQueryBuilder } from "@src/dblogic/sql"
 
-const gradebookSave = async (gb: Gradebook, sc: Schedule): Promise<void> => {
+const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): Promise<void> => {
     if (!sc?.id || !sc.groupId) return
 
     const actualGradebook: GradebookDB = {
@@ -81,8 +81,75 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule): Promise<void> => {
             })
         }
     }
-    
-    return
+
+    // 3. Обрабатываем таски
+    if (gb?.tasks) {
+        const tasksQueryBuilder = createQueryBuilder<TaskDB>()
+        .from('task')
+        .select('*')
+        .where(`"gradebookId" = ${actualGradebook.id}`)
+
+        const existingTasks = await tasksQueryBuilder.all()
+        const tasks = gb.tasks
+
+        if (existingTasks) {
+            for (let i = 0; i < tasks.length; i++) {
+                const task = tasks[i]
+
+                for (let j = 0; j < existingTasks.length; j++) {
+                    const oldTask = existingTasks[j]
+                    if (task.topic === oldTask.topic) {
+                        tasks.splice(i, 1)
+                        existingTasks.splice(j, 1)
+                        i--
+                        j--
+                    }
+                }
+            }
+
+            // Удаляем старые таски (зависимые записи удалятся каскадно)
+            for (let i = 0; i < existingTasks.length; i++) {
+                const task = existingTasks[i]
+                tasksQueryBuilder
+                .where(`id = ${task.id}`)
+                .delete()
+            }
+        }
+
+        // Заносим новые таски
+        for (let i = 0; i < tasks.length; i++) {
+            const task = tasks[i]
+            await tasksQueryBuilder.insert({
+                id: task.id,
+                gradebookId: actualGradebook.id,
+                taskTypeId: await getTaskTypeId(task.type),
+                topic: task.topic
+            })
+            console.log("ТУУУУТУТУТУТУТУТУТУТУТУТУ!!!")
+            // Заносим посещаемость
+            const requiredsQueryBuilder = createQueryBuilder<RequiredDB>()
+            .from('requireds')
+            .select('*')
+            .where(`"taskId" = ${task.id} and "diaryUserId" = ${diaryUserId}`)
+
+            const actualRequired: RequiredDB = {
+                diaryUserId: diaryUserId,
+                taskId: task.id,
+                isRequired: task.isRequired
+            }
+
+            const requiredsExisting = await requiredsQueryBuilder.first()
+            if (!requiredsExisting) {
+                // TODO: Можно добавить проверку и делать ошибку, если всё не Ок.
+                // Нам оно надо, если это не критично ...?
+                await requiredsQueryBuilder.insert(actualRequired)
+                continue
+            }
+            if (requiredsExisting.isRequired !== task.isRequired) {
+                await requiredsQueryBuilder.update(actualRequired)
+            }
+        }
+    }
 }
 
 export { gradebookSave }
