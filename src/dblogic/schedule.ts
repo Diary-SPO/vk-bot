@@ -1,8 +1,9 @@
 import { type DiaryUser, type Schedule } from '@types'
 import { getScheduleFromDatabase, getScheduleFromNetworkCity } from './tables'
+import { Day } from 'diary-shared'
 
 // TODO: Обернуть в try / catch
-export const schedule = async (diaryUser: DiaryUser, date: Date, localCache: boolean, cookie: string): Promise<unknown> => {
+export const schedule = async (diaryUser: DiaryUser, date: Date, localCache: boolean, cookie: string): Promise<number | Day | null> => {
   // const dateString = `${date.getFullYear()}-${('0' + (date.getMonth() + 1)).slice(-2)}-${('0' + (date.getDay())).slice(-2)}`
   if (localCache) return getScheduleFromDatabase(diaryUser, date)
   else return await getScheduleFromNetworkCity(diaryUser, date, cookie)

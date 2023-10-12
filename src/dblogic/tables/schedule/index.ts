@@ -1,10 +1,10 @@
 import fetcher from '@src/api/fetcher'
-import { type Day, type Lesson } from 'diary-shared'
+import { type Day } from 'diary-shared'
 import { SERVER_URL } from '@src/config'
 import { save } from './save'
 import { type DiaryUser } from '@src/types'
 
-const getScheduleFromDatabase = (diaryUser: DiaryUser, date: Date): Lesson | null => { // Возвращает расписание чисто из БД
+const getScheduleFromDatabase = (diaryUser: DiaryUser, date: Date): Day | null => { // Возвращает расписание чисто из БД
   // TODO: Написать запрос дял извлечения данных из БД одним запросом в формате json
   return null
 }
