@@ -1,6 +1,8 @@
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
 import { schedule } from '@src/dblogic'
+import { scheduleController } from '@src/dblogic/interactiveMethods'
+import { interactiveEvents } from '../interactive'
 
 export default new StepScene('schedule', [
   async (context: MessageContext) => {
@@ -23,22 +25,7 @@ export default new StepScene('schedule', [
       }
     }
 
-    await context.send({
-      message: 'Текущая дата: ' + date.toJSON().split('T')[0],
-      keyboard: Keyboard.builder().textButton({
-        label: '📅 <-',
-        payload: {
-          command: 'prev'
-        }
-      }).textButton({
-        label: '-> 📅',
-        payload: {
-          command: 'next'
-        }
-      }).inline()
-    })
-
-    console.log(await schedule(session.diaryUser, date, false, session.diaryUser.cookie))
+    interactiveEvents(context, () => {}, ['schedule', 'enter'])
 
     return await context.send({
       message: '📡 Меню: ',

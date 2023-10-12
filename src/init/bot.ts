@@ -4,6 +4,7 @@ import { scenesHandler, logger } from '@utils'
 import { SessionManager } from '@vk-io/session'
 import { SceneManager } from '@vk-io/scenes'
 import scenes from '@src/init/scenes'
+import {interactiveEvents} from '@src/scenes/interactive'
 
 const vk = new VK({
   token: TOKEN,
@@ -13,10 +14,12 @@ const vk = new VK({
 const sessionManager = new SessionManager()
 const sceneManager = new SceneManager()
 
-vk.updates.on('message', logger)
-vk.updates.on('message_new', sessionManager.middleware)
+vk.updates.on(['message', 'message_event'], logger)
+vk.updates.on(['message_new', 'message_event'], sessionManager.middleware)
 
-vk.updates.on('message_new', sceneManager.middleware)
+vk.updates.on(['message_new', 'message_event'], sceneManager.middleware)
+vk.updates.on('message_event', interactiveEvents)
+
 vk.updates.on('message_new', sceneManager.middlewareIntercept)
 
 vk.updates.on('message_new', scenesHandler)

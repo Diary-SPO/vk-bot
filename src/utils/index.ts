@@ -1,19 +1,24 @@
 import type { CustomContext, CustomNext } from '@types'
 import { auth } from '@src/dblogic'
 import c from 'colors'
-import { exit } from 'process'
 
 const logger = (context: CustomContext, next: CustomNext): void => {
-  const type = (context.subTypes.includes('message_edit')
-    ? 'edit '
-    : 'write') + `(messageId: ${context.id})`
+  if (!context.is(['message_event'])) {
+    const type = (context.subTypes.includes('message_edit')
+      ? 'edit '
+      : 'write') + `(messageId: ${context.id})`
+    
+    const text = `[${context.senderId > 0 ? ' ' : ''}${context.senderId}]\t${type}=> `
+    console.log(c.magenta(`[${new Date().toUTCString()}]\t`), context.senderId < 0
+      ? c.red(text)
+      : c.green(text), context.text)
+  } else {
+    console.log(c.magenta(`[${new Date().toUTCString()}]\t`), c.yellow(`[ ${context.peerId}]\tsendInteractive`))
+  }
 
-  const text = `[${context.senderId > 0 ? ' ' : ''}${context.senderId}]\t${type}=> `
-  console.log(c.magenta(`[${new Date().toUTCString()}]\t`), context.senderId < 0
-    ? c.red(text)
-    : c.green(text), context.text)
-
-  next()
+  if (context.is(['message_event', 'message_new'])) {
+    next()
+  }
 }
 
 const scenesHandler = async (context: CustomContext): Promise<void> => {
