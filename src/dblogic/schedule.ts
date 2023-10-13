@@ -1,6 +1,6 @@
-import { type DiaryUser, type Schedule } from '@types'
+import { type DiaryUser } from '@types'
 import { getScheduleFromDatabase, getScheduleFromNetworkCity } from './tables'
-import { Day } from 'diary-shared'
+import { type Day } from 'diary-shared'
 
 // TODO: Обернуть в try / catch
 export const schedule = async (diaryUser: DiaryUser, date: Date, localCache: boolean, cookie: string): Promise<number | Day | null> => {

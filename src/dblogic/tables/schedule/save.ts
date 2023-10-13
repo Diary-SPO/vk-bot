@@ -3,7 +3,7 @@ import { type DiaryUser, type Schedule } from '@src/types'
 import { type Day } from 'diary-shared'
 import { getTeacherId } from './getTeacherId'
 import { gradebookSave } from '..'
-export const save = async (schedule: Day, diaryUser: DiaryUser) => {
+export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> => {
   // Сохраняем тут. Значений не возвращаем, т.к. смысл ...?
   const date = schedule.date
   const lessons = schedule.lessons ?? [] // Просто-напросто не будет перебирать, если null
@@ -42,8 +42,7 @@ export const save = async (schedule: Day, diaryUser: DiaryUser) => {
         scheduleIdsActualy.push(scheduleInsert.id)
         thisSchedule.id = scheduleInsert.id
         thisSchedule.groupId = scheduleInsert.groupId
-      }
-      else throw new Error('Error get id from insert row')
+      } else throw new Error('Error get id from insert row')
     } else {
       const scheduleUpdate = await scheduleQueryBuilder.update(thisSchedule)
       if (scheduleUpdate === null) throw new Error('Error update schedule')
@@ -51,8 +50,7 @@ export const save = async (schedule: Day, diaryUser: DiaryUser) => {
         scheduleIdsActualy.push(scheduleUpdate.id)
         thisSchedule.id = scheduleUpdate.id
         thisSchedule.groupId = scheduleUpdate.groupId
-      }
-      else throw new Error('Error get id from update row')
+      } else throw new Error('Error get id from update row')
     }
 
     if (lesson?.gradebook) {
@@ -64,5 +62,5 @@ export const save = async (schedule: Day, diaryUser: DiaryUser) => {
 
   // Чистим от старых записей (которые выбыли в следствии изменения/удаления данных)
   // Это могут быть занятия, которые мы больше не можем увидеть по времени, т.к. их не в ответе от poo
-  //if (scheduleIdsActualy.length > 0) { await scheduleQueryBuilder.where(`id NOT IN(${scheduleIdsActualy.join(', ')})`).delete() }
+  // if (scheduleIdsActualy.length > 0) { await scheduleQueryBuilder.where(`id NOT IN(${scheduleIdsActualy.join(', ')})`).delete() }
 }

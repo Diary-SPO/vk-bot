@@ -1,6 +1,6 @@
 import { type CustomContext, type VKUser, type DiaryUser } from '@types'
 import { decryptData, createQueryBuilder } from './sql'
-import { ContextDefaultState, MessageContext, MessageEventContext } from 'vk-io'
+import { type ContextDefaultState, type MessageContext, type MessageEventContext } from 'vk-io'
 
 export const auth = async (context: CustomContext | MessageContext<ContextDefaultState> | MessageEventContext): Promise<boolean> => {
   const { session } = context

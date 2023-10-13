@@ -4,7 +4,7 @@ import { scenesHandler, logger } from '@utils'
 import { SessionManager } from '@vk-io/session'
 import { SceneManager } from '@vk-io/scenes'
 import scenes from '@src/init/scenes'
-import {interactiveEvents} from '@src/scenes/interactive'
+import { interactiveEvents } from '@src/scenes/interactive'
 
 const vk = new VK({
   token: TOKEN,

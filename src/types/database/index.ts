@@ -86,9 +86,9 @@ export interface ThemeDB {
 }
 
 export interface TaskDB {
-  id: number,
-  gradebookId: number,
-  taskTypeId: number,
+  id: number
+  gradebookId: number
+  taskTypeId: number
   topic: string
 }
 

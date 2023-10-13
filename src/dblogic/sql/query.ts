@@ -64,7 +64,7 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
       return result[0]
     },
 
-    async all(): Promise<T[] | null> {
+    async all (): Promise<T[] | null> {
       const query = `SELECT ${this.columns.join(', ')} FROM "${this.table}" WHERE ${this.conditions} LIMIT 1`
       const result = await executeQuery<T>(query)
       return result || null
