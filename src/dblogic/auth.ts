@@ -1,11 +1,12 @@
 import { type CustomContext, type VKUser, type DiaryUser } from '@types'
 import { decryptData, createQueryBuilder } from './sql'
+import { ContextDefaultState, MessageContext, MessageEventContext } from 'vk-io'
 
-export const auth = async (context: CustomContext): Promise<boolean> => {
+export const auth = async (context: CustomContext | MessageContext<ContextDefaultState> | MessageEventContext): Promise<boolean> => {
   const { session } = context
   if (session?.isAuth) return true
 
-  const vkid = context.senderId
+  const vkid = context.senderId ?? context.peerId
 
   try {
     const queryBuilder = createQueryBuilder<VKUser>()

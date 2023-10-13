@@ -48,14 +48,14 @@ async function constructResponse(command: string, message_id: number, session: a
       }
       return {
         //peerId: MessageContext.peerId,
-        message: 'Текущая дата: ' + session.date.toJSON().split('T')[0] + buildLessons(day),
+        message: '📅 Текущая дата: ' + session.date.toJSON().split('T')[0] + `${buildLessons(day)}`,
         keyboard: Keyboard.builder().callbackButton({
-          label: '📅 <-',
+          label: '⬅️ назад',
           payload: {
             command: commandBuilder('schedule_prev')
           }
         }).callbackButton({
-          label: '-> 📅',
+          label: 'вперёд ➡️',
           payload: {
             command: commandBuilder('schedule_next')
           }
@@ -65,6 +65,20 @@ async function constructResponse(command: string, message_id: number, session: a
   }
   
 }
+
+function buildLessons(day: Day) {
+  const lessons = day.lessons
+  const numbers = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
+  if (lessons === null) return `Занятий нет`
+  return Object.values(lessons).map((lesson, index) => {
+    if (!lesson.name) return '\n'
+    return `
+    ${numbers[index]} ${lesson.name}
+    ⏰ ${lesson.startTime} - ${lesson.endTime}
+    🏤 Аудитория: ${lesson.timetable.classroom.name}
+    `
+  }).join('') // Убирает запятые на выходе
+} 
 
 interface Response {
   message: string,

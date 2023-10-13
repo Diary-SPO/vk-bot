@@ -1,11 +1,10 @@
 import { type StepScene } from '@vk-io/scenes'
-import { login, home, settings, schedule } from '@src/scenes'
+import { login, home, settings } from '@src/scenes'
 
 const scenes: StepScene[] = [
   login,
   home,
-  settings,
-  schedule
+  settings
 ]
 
 export default scenes

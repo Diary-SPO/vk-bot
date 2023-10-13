@@ -1,6 +1,7 @@
 import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
 import { type DiaryUser } from '@types'
+import { interactiveEvents } from '../interactive'
 
 export default new StepScene('home', [
   async (context: MessageContext) => {
@@ -29,16 +30,15 @@ export default new StepScene('home', [
         break
       }
       case 'schedule': {
-        return context.scene.enter('schedule')
-      }
+        const messageId = (await context.send('🚴‍♂ Расписание загружается...')).id
+        await interactiveEvents(context, () => {}, ['schedule', 'refresh', `${messageId}`])
+      } break
       case 'marks': {
         await context.send('Скоро будет...')
-        break
-      }
+      } break
       case 'more': {
         await context.send('Скоро будет...')
-        break
-      }
+      } break
     }
 
     return await context.send({
