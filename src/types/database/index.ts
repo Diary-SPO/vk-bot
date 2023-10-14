@@ -69,7 +69,8 @@ export interface TeacherDB extends Teacher {
 }
 
 export interface GradebookDB {
-  id?: number
+  id?: number,
+  gradebookId?: number
   scheduleId: number
   lessonTypeId: number
 }

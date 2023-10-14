@@ -9,10 +9,10 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
   const actualGradebook: GradebookDB = {
     scheduleId: sc.id,
     lessonTypeId: await lessonTypeGetId(gb.lessonType),
-    id: gb.id
+    gradebookId: gb.id
   }
 
-  const gradebookQueryBuilder = createQueryBuilder<GradebookDB>().from('gradebook').select('*').where(`"id" = '${actualGradebook.id}'`)
+  const gradebookQueryBuilder = createQueryBuilder<GradebookDB>().from('gradebook').select('*').where(`"scheduleId" = '${sc.id}'`)
   const gradebookExisting = await gradebookQueryBuilder.first()
 
   // 1. Обрабатываем само "тело" --- Gradebook
@@ -23,18 +23,21 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
       // обновляем
       const update = await gradebookQueryBuilder.update(actualGradebook)
       if (update) {
+        actualGradebook.gradebookId = update.gradebookId
         actualGradebook.id = update.id
       } else {
         throw new Error('Error update gradebook')
       }
     } else {
       // Если не надо обновлять, то просто записываем идишник
+      actualGradebook.gradebookId = gradebookExisting.gradebookId
       actualGradebook.id = gradebookExisting.id
     }
   } else {
     // Иначе добавляем
     const insert = await gradebookQueryBuilder.insert(actualGradebook)
     if (insert) {
+      actualGradebook.gradebookId = insert.gradebookId
       actualGradebook.id = insert.id
     } else {
       throw new Error('Error insert gradebook')
@@ -124,7 +127,7 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
         taskTypeId: await getTaskTypeId(task.type),
         topic: task.topic
       })
-      console.log('ТУУУУТУТУТУТУТУТУТУТУТУТУ!!!')
+
       // Заносим посещаемость
       const requiredsQueryBuilder = createQueryBuilder<RequiredDB>()
         .from('requireds')

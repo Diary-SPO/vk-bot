@@ -13,7 +13,7 @@ export const scheduleController = async (command: string, messageId: number, eve
 
   date.setDate(date.getDate() + (command === 'prev' ? -1 : command === 'next' ? 1 : 0))
   session.date = date
-console.log(eventContext)
+
   const scheduleFirst = await constructResponse(command, messageId, session, eventContext?.eventPayload)
 
   // Отсылаем ответ
@@ -68,8 +68,8 @@ async function constructResponse (command: string, messageId: number, session: a
 ⏰ ${info.startTime} - ${info.endTime}
 🏫 Аудитория: ${info.timetable.classroom.name}, ст. ${info.timetable.classroom.building}\n
 🛡 Тема: ${themes === undefined ? 'Нету' : themes[0]}\n
-${info?.gradebook?.tasks ? `🔔 Задания: ${
-  Object.values(info?.gradebook?.tasks).map((task, index) => {
+${info?.gradebook?.tasks?.length ?? 0 > 0 ? `🔔 Задания: ${
+  Object.values(info?.gradebook?.tasks ?? []).map((task, index) => {
     return `\n${numbers[index]} Тема: ${task.topic}
 📈 Оценка: ${task?.mark ? task.mark : 'нету'}
     `
