@@ -12,7 +12,7 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
     id: gb.id
   }
 
-  const gradebookQueryBuilder = createQueryBuilder<GradebookDB>().from('gradebook').select('*').where(`"scheduleId" = '${actualGradebook.scheduleId}'`)
+  const gradebookQueryBuilder = createQueryBuilder<GradebookDB>().from('gradebook').select('*').where(`"id" = '${actualGradebook.id}'`)
   const gradebookExisting = await gradebookQueryBuilder.first()
 
   // 1. Обрабатываем само "тело" --- Gradebook
@@ -43,7 +43,7 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
 
   // 2. Обрабатываем темы
   if (gb?.themes) {
-    const themes = gb.themes
+    const themes = structuredClone(gb.themes)
     const themeQueryBuilder = createQueryBuilder<ThemeDB>().from('theme').select('*').where(`"gradebookId" = ${actualGradebook.id}`)
     const existingThemes = await themeQueryBuilder.all()
 
@@ -89,7 +89,7 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
       .where(`"gradebookId" = ${actualGradebook.id}`)
 
     const existingTasks = await tasksQueryBuilder.all()
-    const tasks = gb.tasks
+    const tasks = structuredClone(gb.tasks)
 
     if (existingTasks) {
       for (let i = 0; i < tasks.length; i++) {
