@@ -9,10 +9,13 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
   const actualGradebook: GradebookDB = {
     scheduleId: sc.id,
     lessonTypeId: await lessonTypeGetId(gb.lessonType),
-    gradebookId: gb.id
+    id: gb.id
   }
 
-  const gradebookQueryBuilder = createQueryBuilder<GradebookDB>().from('gradebook').select('*').where(`"scheduleId" = '${sc.id}'`)
+  const gradebookQueryBuilder = createQueryBuilder<GradebookDB>()
+    .from('gradebook')
+    .select('*')
+    .where(`"scheduleId" = '${sc.id}'`)
   const gradebookExisting = await gradebookQueryBuilder.first()
 
   // 1. Обрабатываем само "тело" --- Gradebook
@@ -22,32 +25,27 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
             gradebookExisting.scheduleId !== actualGradebook.scheduleId) {
       // обновляем
       const update = await gradebookQueryBuilder.update(actualGradebook)
-      if (update) {
-        actualGradebook.gradebookId = update.gradebookId
-        actualGradebook.id = update.id
-      } else {
+      if (!update) {
         throw new Error('Error update gradebook')
       }
+      actualGradebook.id = update.id
     } else {
       // Если не надо обновлять, то просто записываем идишник
-      actualGradebook.gradebookId = gradebookExisting.gradebookId
       actualGradebook.id = gradebookExisting.id
     }
   } else {
     // Иначе добавляем
     const insert = await gradebookQueryBuilder.insert(actualGradebook)
-    if (insert) {
-      actualGradebook.gradebookId = insert.gradebookId
-      actualGradebook.id = insert.id
-    } else {
+    if (!insert) {
       throw new Error('Error insert gradebook')
     }
+    actualGradebook.id = insert.id
   }
 
   // 2. Обрабатываем темы
   if (gb?.themes) {
     const themes = structuredClone(gb.themes)
-    const themeQueryBuilder = createQueryBuilder<ThemeDB>().from('theme').select('*').where(`"gradebookId" = ${actualGradebook.id}`)
+    const themeQueryBuilder = createQueryBuilder<ThemeDB>().from('theme').select('*').where(`id = ${actualGradebook.id}`)
     const existingThemes = await themeQueryBuilder.all()
 
     // Отсеиваем те, которые уже добавлены в базу
@@ -71,16 +69,21 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
       // (такой перебор экономит количество обращений к БД :))
       // Удаляем старые записи (темы)
       for (let i = 0; i < existingThemes.length; i++) {
-        themeQueryBuilder.where(`description = '${existingThemes[i]}' and "gradebookId" = '${actualGradebook.id}'`).delete()
+        themeQueryBuilder
+          .where(`description = '${existingThemes[i]}' and "gradebookId" = '${actualGradebook.id}'`)
+          .delete()
+          .catch((err) => { console.log(`Error delete theme: ${err}`) })
       }
     }
 
     // Добавляем новые темы
     for (let i = 0; i < themes.length; i++) {
-      themeQueryBuilder.insert({
-        description: themes[i],
-        gradebookId: actualGradebook.id
-      })
+      themeQueryBuilder
+        .insert({
+          description: themes[i],
+          gradebookId: actualGradebook.id
+        })
+        .catch((err) => { console.log(`Error insert theme: ${err}`) })
     }
   }
 
@@ -115,6 +118,7 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
         tasksQueryBuilder
           .where(`id = ${task.id}`)
           .delete()
+          .catch((err) => { console.log(`Error delete task: ${err}`) })
       }
     }
 

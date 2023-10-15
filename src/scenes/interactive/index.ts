@@ -3,7 +3,7 @@ import { scheduleController } from '@src/dblogic/interactiveMethods'
 import vk from '@src/init/bot'
 import { type Middleware } from '@vk-io/session'
 import { auth } from '@src/dblogic'
-export const interactiveEvents = async (context: MessageContext<ContextDefaultState> | MessageEventContext, next: Middleware<any>, customCommand: string[] = ['']) => {
+export const interactiveEvents = async (context: MessageContext<ContextDefaultState> | MessageEventContext, next: Middleware<any>, customCommand: string[] = ['']): Promise<void> => {
   const isAuth = await auth(context)
   if (!isAuth) {
     return context.answer({

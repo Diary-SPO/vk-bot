@@ -21,24 +21,15 @@ export default new StepScene('home', [
           `\n📱 ${user.phone}`
         )
       } break
-      case 'group': {
-        await context.send('Скоро будет...')
-        break
-      }
-      case 'statistic': {
-        await context.send('Скоро будет...')
-        break
-      }
+      case 'group': await context.send('Скоро будет...'); break
+      case 'statistic': await context.send('Скоро будет...'); break
       case 'schedule': {
         const messageId = (await context.send('🚴‍♂ Расписание загружается...')).id
-        await interactiveEvents(context, () => {}, ['schedule', 'refresh', `${messageId}`])
-      } break
-      case 'marks': {
-        await context.send('Скоро будет...')
-      } break
-      case 'more': {
-        await context.send('Скоро будет...')
-      } break
+        session.scheduleDate = new Date() // Говорим, что нам нужна текущая дата
+        await interactiveEvents(context, () => {}, ['schedule', 'refresh', `${messageId}`]); return
+      }
+      case 'marks': await context.send('Скоро будет...'); break
+      case 'more': await context.send('Скоро будет...'); break
     }
 
     return await context.send({
@@ -82,7 +73,7 @@ export default new StepScene('home', [
             command: 'settings'
           }
         }
-      ).oneTime()
+      )// .oneTime()
     })
   }
 ])

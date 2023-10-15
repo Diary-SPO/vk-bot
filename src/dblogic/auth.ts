@@ -22,7 +22,7 @@ export const auth = async (context: CustomContext | MessageContext<ContextDefaul
     const diaryUser = await diaryUserQueryBuilder
       .from('diaryUser')
       .select('*')
-      .where(`"id" = ${user.diaryId}`)
+      .where(`id = ${user.diaryId}`)
       .first()
 
     if (!diaryUser) return false

@@ -2,7 +2,7 @@ import { createQueryBuilder } from '@src/dblogic/sql'
 import { type DiaryUser, type Schedule } from '@src/types'
 import { type Day } from 'diary-shared'
 import { getTeacherId } from './getTeacherId'
-import { gradebookSave } from '..'
+import { gradebookSave } from '@src/dblogic/tables'
 export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> => {
   // Сохраняем тут. Значений не возвращаем, т.к. смысл ...?
   const date = schedule.date
@@ -11,14 +11,14 @@ export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> =
   // Подготавливаемся к запросам
   const scheduleQueryBuilder = createQueryBuilder<Schedule>().from('schedule').select('*')
 
-  const scheduleIdsActualy: number[] = []
+  const scheduleIdsActually: number[] = []
   // TODO: Поправить внесение занятий
   for (let i = 0; i < lessons.length; i++) {
     const lesson = lessons[i]
     if (!lesson.timetable) continue
-    const dateFormated = new Date(date).toJSON().split('T')[0]
+    const dateFormatted = new Date(date).toJSON().split('T')[0]
     // Дата, время, номер группы и СПО - основные идентификаторы
-    const whereSchedule = `"date" = '${dateFormated}' and 
+    const whereSchedule = `"date" = '${dateFormatted}' and 
                                    "startTime" = '${lesson.startTime}' and
                                    "endTime" = '${lesson.endTime}'`
     console.log(whereSchedule)
@@ -29,32 +29,46 @@ export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> =
       teacherId: await getTeacherId(lesson?.timetable?.teacher, diaryUser.spoId),
       classroomBuilding: lesson.timetable.classroom.building,
       classroomName: lesson.timetable.classroom.name,
-      subjectName: lesson?.name ?? '???',
-      date: dateFormated,
+      subjectName: lesson?.name ?? 'Не передано',
+      date: dateFormatted,
       startTime: lesson.startTime,
       endTime: lesson.endTime
     }
 
     if (!scheduleExisting) {
       const scheduleInsert = await scheduleQueryBuilder.insert(thisSchedule)
-      if (scheduleInsert === null) throw new Error('Error insert schedule')
-      if (scheduleInsert.id) {
-        scheduleIdsActualy.push(scheduleInsert.id)
-        thisSchedule.id = scheduleInsert.id
-        thisSchedule.groupId = scheduleInsert.groupId
-      } else throw new Error('Error get id from insert row')
+      if (!scheduleInsert) {
+        throw new Error('Error insert schedule')
+      }
+      if (!scheduleInsert?.id) {
+        throw new Error('Error get id from insert row')
+      }
+      scheduleIdsActually.push(scheduleInsert.id)
+      thisSchedule.id = scheduleInsert.id
+      thisSchedule.groupId = scheduleInsert.groupId
     } else {
       const scheduleUpdate = await scheduleQueryBuilder.update(thisSchedule)
-      if (scheduleUpdate === null) throw new Error('Error update schedule')
-      if (scheduleUpdate.id) {
-        scheduleIdsActualy.push(scheduleUpdate.id)
-        thisSchedule.id = scheduleUpdate.id
-        thisSchedule.groupId = scheduleUpdate.groupId
-      } else throw new Error('Error get id from update row')
+      if (!scheduleUpdate) {
+        throw new Error('Error update schedule')
+      }
+      if (!scheduleUpdate?.id) {
+        throw new Error('Error get id from update row')
+      }
+      scheduleIdsActually.push(scheduleUpdate.id)
+      thisSchedule.id = scheduleUpdate.id
+      thisSchedule.groupId = scheduleUpdate.groupId
     }
 
     if (lesson?.gradebook) {
       gradebookSave(lesson.gradebook, thisSchedule, diaryUser.id)
+        .catch((err) => { console.log(`Error save gradebook: ${err}`) })
+    } else {
+      // Если градебука нет, то чистим старые записи
+      createQueryBuilder()
+        .from('gradebook')
+        .where(`"scheduleId" = ${thisSchedule.id}`)
+        .delete()
+        .catch((err) => { console.log(`Error delete gradebook: ${err}`) })
     }
 
     // Если дошли до сюда, то круто. Дальше - легче, но затратно: обновляем темы, таски, оценки
@@ -62,5 +76,5 @@ export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> =
 
   // Чистим от старых записей (которые выбыли в следствии изменения/удаления данных)
   // Это могут быть занятия, которые мы больше не можем увидеть по времени, т.к. их не в ответе от poo
-  // if (scheduleIdsActualy.length > 0) { await scheduleQueryBuilder.where(`id NOT IN(${scheduleIdsActualy.join(', ')})`).delete() }
+  // if (scheduleIdsActually.length > 0) { await scheduleQueryBuilder.where(`id NOT IN(${scheduleIdsActually.join(', ')})`).delete() }
 }

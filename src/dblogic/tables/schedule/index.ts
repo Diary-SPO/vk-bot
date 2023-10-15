@@ -5,7 +5,7 @@ import { save } from './save'
 import { type DiaryUser } from '@src/types'
 
 const getScheduleFromDatabase = (diaryUser: DiaryUser, date: Date): Day | null => { // Возвращает расписание чисто из БД
-  // TODO: Написать запрос дял извлечения данных из БД одним запросом в формате json
+  // TODO: Написать запрос для извлечения данных из БД одним запросом в формате json
   return null
 }
 

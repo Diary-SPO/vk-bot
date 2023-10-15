@@ -60,7 +60,9 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
 
     async first (): Promise<T | null> {
       const result = await this.all()
-      if (result === null || result.length === 0) return null
+      if (result === null || result.length === 0) {
+        return null
+      }
       return result[0]
     },
 
