@@ -45,7 +45,7 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
   // 2. Обрабатываем темы
   if (gb?.themes) {
     const themes = structuredClone(gb.themes)
-    const themeQueryBuilder = createQueryBuilder<ThemeDB>().from('theme').select('*').where(`id = ${actualGradebook.id}`)
+    const themeQueryBuilder = createQueryBuilder<ThemeDB>().from('theme').select('*').where(`"gradebookId" = ${actualGradebook.id}`)
     const existingThemes = await themeQueryBuilder.all()
 
     // Отсеиваем те, которые уже добавлены в базу
