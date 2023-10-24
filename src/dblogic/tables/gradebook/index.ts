@@ -15,7 +15,7 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
   const gradebookQueryBuilder = createQueryBuilder<GradebookDB>()
     .from('gradebook')
     .select('*')
-    .where(`"scheduleId" = '${sc.id}'`)
+    .where(`"id" = '${gb.id}'`)
   const gradebookExisting = await gradebookQueryBuilder.first()
 
   // 1. Обрабатываем само "тело" --- Gradebook

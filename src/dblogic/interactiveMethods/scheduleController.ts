@@ -87,19 +87,24 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
       }
     }
     default: {
-      const day: Day | number | null = await schedule(session.diaryUser, session.scheduleDate, false, session.diaryUser.cookie)
-      session.day = day
+      let day: Day | number | null = await schedule(session.diaryUser, session.scheduleDate, false, session.diaryUser.cookie)
+      let isDatabase = false
       if (typeof day === 'number' || day === null) {
-        return {
-          message: 'Ошибка загрузки расписания...',
-          keyboard: Keyboard.builder().callbackButton({
-            label: 'Обновить',
-            payload: {
-              command: commandBuilder('schedule_refresh')
-            }
-          }).inline()
+        day = await schedule(session.diaryUser, session.scheduleDate, true, session.diaryUser.cookie)
+        isDatabase = true
+        if (!day || typeof day === 'number') {
+          return {
+            message: 'Ошибка загрузки расписания...',
+            keyboard: Keyboard.builder().callbackButton({
+              label: 'Обновить',
+              payload: {
+                command: commandBuilder('schedule_refresh')
+              }
+            }).inline()
+          }
         }
       }
+      session.day = day
 
       day.lessons?.forEach((lesson, index) => {
         if (!lesson.timetable) return
@@ -118,16 +123,21 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
 
       return {
         // peerId: MessageContext.peerId,
-        message: '📅 Текущая дата: ' + dateString + `\n${days[date.getDay()]}` + buildLessons(day),
+        message: '📅 Текущая дата: ' + dateString + `\n${days[date.getDay()]}` + buildLessons(day, isDatabase),
         keyboard: keyboardConstruct
       }
     }
   }
 }
 
-function buildLessons (day: Day): string {
+function buildLessons (day: Day, isDatabase: boolean): string {
   const lessons = day.lessons
-  if (lessons?.length === 0 || lessons === null) {
+  console.log(day)
+
+  if (lessons?.length === 0 || !lessons) {
+    if (isDatabase) {
+      return `\n\nВ базе пусто, а дневник недоступен :)`
+    }
     return '\n\n🎉 Занятий нет 🎉'
   }
   return Object.values(lessons).map((lesson, index) => {
@@ -135,9 +145,10 @@ function buildLessons (day: Day): string {
     return `
 ${numbers[index]} ${lesson.name}
 ⏰ ${lesson.startTime} - ${lesson.endTime}
-🏤 Аудитория: ${lesson.timetable.classroom.name}
+🏤 Аудитория: ${lesson.timetable.classroom.name === '0' ? 'ДО 🤠' : lesson.timetable.classroom.name}
 `
-  }).join('') // Убирает запятые на выходе
+// TODO: Если дистант, нужно првоерить, есть ли ДЗ, и если есть, то уведомить об этом в отдельном поле
+  }).join('') + (isDatabase ? '\n\n📌 ПОЛУЧЕНО ИЗ БАЗЫ 📌' : '') // Убирает запятые на выходе
 }
 
 interface Response {

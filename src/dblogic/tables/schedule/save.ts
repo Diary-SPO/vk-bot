@@ -16,7 +16,7 @@ export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> =
   for (let i = 0; i < lessons.length; i++) {
     const lesson = lessons[i]
     if (!lesson.timetable) continue
-    const dateFormatted = new Date(date).toJSON().split('T')[0]
+    const dateFormatted = String(date).split('T')[0]
     // Дата, время, номер группы и СПО - основные идентификаторы
     const whereSchedule = `"date" = '${dateFormatted}' and 
                                    "startTime" = '${lesson.startTime}' and
@@ -76,5 +76,7 @@ export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> =
 
   // Чистим от старых записей (которые выбыли в следствии изменения/удаления данных)
   // Это могут быть занятия, которые мы больше не можем увидеть по времени, т.к. их не в ответе от poo
-  // if (scheduleIdsActually.length > 0) { await scheduleQueryBuilder.where(`id NOT IN(${scheduleIdsActually.join(', ')})`).delete() }
+   if (scheduleIdsActually.length > 0) { 
+    await scheduleQueryBuilder.where(`id NOT IN(${scheduleIdsActually.join(', ')}) and date = '${String(date).split('T')[0]}'`).delete() 
+  }
 }
