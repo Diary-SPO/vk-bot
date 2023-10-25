@@ -3,6 +3,7 @@ import { type DiaryUser, type Schedule } from '@src/types'
 import { type Day } from 'diary-shared'
 import { getTeacherId } from './getTeacherId'
 import { gradebookSave } from '@src/dblogic/tables'
+import { subGroupGet } from '@src/dblogic/subGroupGet'
 export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> => {
   // Сохраняем тут. Значений не возвращаем, т.к. смысл ...?
   const date = schedule.date
@@ -10,6 +11,7 @@ export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> =
 
   // Подготавливаемся к запросам
   const scheduleQueryBuilder = createQueryBuilder<Schedule>().from('schedule').select('*')
+  const subGroupName = subGroupGet(schedule)?.[0] ?? 'NONE' // <- ТУТ ДОЛЖНА БЫТЬ ФРАЗА, КОТОРОЙ ТОЧНО НЕ БУДЕТ В НАЗВАНИИ ПРЕДМЕТА
 
   const scheduleIdsActually: number[] = []
   // TODO: Поправить внесение занятий
@@ -20,7 +22,8 @@ export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> =
     // Дата, время, номер группы и СПО - основные идентификаторы
     const whereSchedule = `"date" = '${dateFormatted}' and 
                                    "startTime" = '${lesson.startTime}' and
-                                   "endTime" = '${lesson.endTime}'`
+                                   "endTime" = '${lesson.endTime}' and
+                                   ("subjectName" LIKE '%${subGroupName}%' or "subjectName" NOT LIKE '%/%')`
     console.log(whereSchedule)
 
     const scheduleExisting = await scheduleQueryBuilder.where(whereSchedule).first()
@@ -76,7 +79,7 @@ export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> =
 
   // Чистим от старых записей (которые выбыли в следствии изменения/удаления данных)
   // Это могут быть занятия, которые мы больше не можем увидеть по времени, т.к. их не в ответе от poo
-   if (scheduleIdsActually.length > 0) { 
-    await scheduleQueryBuilder.where(`id NOT IN(${scheduleIdsActually.join(', ')}) and date = '${String(date).split('T')[0]}'`).delete() 
+  if (scheduleIdsActually.length > 0) {
+    await scheduleQueryBuilder.where(`id NOT IN(${scheduleIdsActually.join(', ')}) and date = '${String(date).split('T')[0]}' and ("subjectName" NOT LIKE '%/%' or "subjectName" LIKE '%${subGroupName}%')`).delete()
   }
 }

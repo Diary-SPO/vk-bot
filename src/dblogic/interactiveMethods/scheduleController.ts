@@ -2,6 +2,7 @@ import { Keyboard, type MessageContext, type MessageEventContext } from 'vk-io'
 import { schedule } from '..'
 import vk from '@src/init/bot'
 import { type Lesson, type Day, Grade } from 'diary-shared'
+import { subGroupGet } from '../subGroupGet'
 
 const numbers = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
 const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
@@ -72,7 +73,7 @@ async function constructResponse (command: string, messageId: number, session: a
 👨‍💻 Преподаватель: ${[teacher?.lastName, teacher?.firstName, teacher?.middleName].join(' ')}\n
 ⏰ ${info.startTime} - ${info.endTime}
 🏫 Аудитория: ${info.timetable.classroom.name}, ст. ${info.timetable.classroom.building}\n
-🛡 Тема: ${themes === undefined ? 'Нету' : themes[0]}\n
+🛡 Тема: ${!themes ? 'Нету' : themes[0]}\n
 ${(info?.gradebook?.tasks?.length ?? 0) > 0
 ? `🔔 Задания: ${
   Object.values(info?.gradebook?.tasks ?? []).map((task, index) => {
@@ -105,11 +106,14 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
         }
       }
       session.day = day
+      const currSubGroups: string[] = subGroupGet(day)
 
+      let indexCounter = 0
       day.lessons?.forEach((lesson, index) => {
         if (!lesson.timetable) return
+        if (lesson.name !== null && ![payload?.subGroup ?? currSubGroups[0], ''].includes(lesson.name.split('/')?.[1] ?? '') && (payload?.subGroup ?? currSubGroups[0])) return
         keyboardConstruct.row().callbackButton({
-          label: `${numbers[index]} ${lesson.name?.substring(0, lesson.name.length > 20 ? 20 : lesson.name.length) + '...'}`,
+          label: `${numbers[indexCounter++]} ${lesson.name?.substring(0, lesson.name.length > 20 ? 20 : lesson.name.length) + '...'}`,
           payload: {
             command: commandBuilder('schedule_select-' + index),
             indexLesson: index,
@@ -121,33 +125,50 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
       const date = new Date(session.scheduleDate)
       const dateString = `${date.getDate().toString().padStart(2, '0')} ${months[Number(date.getMonth().toString().padStart(2, '0'))]} ${date.getFullYear()}`
 
+      if (isDatabase) {
+        if (currSubGroups.length > 0) {
+          keyboardConstruct.row()
+          currSubGroups.forEach((value) => {
+            keyboardConstruct
+              .callbackButton({
+                label: value,
+                payload: {
+                  command: commandBuilder('schedule_refresh'),
+                  subGroup: value
+                }
+              })
+          })
+        }
+      }
+      // ВОТ ТУТ ДОДЕЛАТЬ
       return {
         // peerId: MessageContext.peerId,
-        message: '📅 Текущая дата: ' + dateString + `\n${days[date.getDay()]}` + buildLessons(day, isDatabase),
+        message: '📅 Текущая дата: ' + dateString + `\n${days[date.getDay()]}` + buildLessons(day, isDatabase, payload?.subGroup ?? currSubGroups?.[0] ?? ''),
         keyboard: keyboardConstruct
       }
     }
   }
 }
 
-function buildLessons (day: Day, isDatabase: boolean): string {
+function buildLessons (day: Day, isDatabase: boolean, subGroup: string | null): string {
   const lessons = day.lessons
   console.log(day)
 
   if (lessons?.length === 0 || !lessons) {
     if (isDatabase) {
-      return `\n\nВ базе пусто, а дневник недоступен :)`
+      return '\n\nВ базе пусто, а дневник недоступен :)'
     }
     return '\n\n🎉 Занятий нет 🎉'
   }
-  return Object.values(lessons).map((lesson, index) => {
-    if (!lesson.name) return '\n'
-    return `
-${numbers[index]} ${lesson.name}
-⏰ ${lesson.startTime} - ${lesson.endTime}
-🏤 Аудитория: ${lesson.timetable.classroom.name === '0' ? 'ДО 🤠' : lesson.timetable.classroom.name}
-`
-// TODO: Если дистант, нужно првоерить, есть ли ДЗ, и если есть, то уведомить об этом в отдельном поле
+  let indexCounter = 0
+  return '\n' + (subGroup && isDatabase ? `\n☺ ${subGroup}\n\n` : '') + Object.values(lessons).map((lesson, index) => {
+    if (!lesson.name) return ''
+    if (![subGroup, ''].includes(lesson.name.split('/')?.[1] ?? '') && subGroup) return ''
+    return `\n${numbers[indexCounter++]} ${lesson.name}` +
+           `\n⏰ ${lesson.startTime} - ${lesson.endTime}` +
+           `\n🏤 Аудитория: ${lesson.timetable.classroom.name === '0' ? 'ДО 🤠' : lesson.timetable.classroom.name}` +
+           '\n'
+           // TODO: Если дистант, нужно првоерить, есть ли ДЗ, и если есть, то уведомить об этом в отдельном поле
   }).join('') + (isDatabase ? '\n\n📌 ПОЛУЧЕНО ИЗ БАЗЫ 📌' : '') // Убирает запятые на выходе
 }
 

@@ -109,7 +109,7 @@ export function createQueryBuilder<T> (): QueryBuilder<T> {
       return (await executeQuery<T>(await this.buildUpdateQuery(data)))[0] || null
     },
 
-    async customQueryRun(sql: string): Promise<T | null> {
+    async customQueryRun (sql: string): Promise<T | null> {
       return (await executeQuery<T>(sql))[0] || null
     }
   }

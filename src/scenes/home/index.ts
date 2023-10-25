@@ -17,7 +17,7 @@ export default new StepScene('home', [
         const date = new Date(user.birthday)
         await context.send(
           `👤 ${user.lastName} ${user.firstName} ${user.middleName}` +
-          `\n👉 ${date.getUTCDate()} лет` +
+          `\n👉 ${new Date().getUTCFullYear() - date.getUTCFullYear()} лет` +
           `\n📱 ${user.phone}`
         )
       } break

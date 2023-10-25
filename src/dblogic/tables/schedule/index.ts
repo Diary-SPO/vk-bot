@@ -7,7 +7,7 @@ import { createQueryBuilder } from '@src/dblogic/sql'
 
 const getScheduleFromDatabase = async (diaryUser: DiaryUser, date: Date): Promise<Day | null> => { // Возвращает расписание чисто из БД
   // TODO: Написать запрос для извлечения данных из БД одним запросом в формате json
-  const databaseSchedule = await createQueryBuilder<{json: Day}>().customQueryRun(`
+  const databaseSchedule = await createQueryBuilder<{ json: Day }>().customQueryRun(`
   WITH query_data (diaryUserId, dateSchedule) as (
     values (${diaryUser.id}, '${new Date(date).toJSON().split('T')[0]}')
     )
@@ -55,6 +55,7 @@ const getScheduleFromDatabase = async (diaryUser: DiaryUser, date: Date): Promis
               LEFT JOIN "teacher" ON teacher.id = "teacherId"
               /*Условие*/
               WHERE schedule.date = query_data.dateSchedule
+              ORDER BY schedule."startTime", schedule."subjectName"
              ) as lessons)
     ) as json
     FROM query_data
