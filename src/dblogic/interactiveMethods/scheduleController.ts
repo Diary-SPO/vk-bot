@@ -1,7 +1,7 @@
 import { Keyboard, type MessageContext, type MessageEventContext } from 'vk-io'
 import { schedule } from '..'
 import vk from '@src/init/bot'
-import { type Lesson, type Day, Grade } from 'diary-shared'
+import { type Lesson, type Day, Grade, LessonType } from 'diary-shared'
 import { subGroupGet } from '../subGroupGet'
 
 const numbers = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
@@ -78,7 +78,7 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
 ? `🔔 Задания: ${
   Object.values(info?.gradebook?.tasks ?? []).map((task, index) => {
     return `\n${numbers[index]} Тема: ${task.topic}
-📈 Оценка: ${task?.mark ? Grade[task.mark] ?? task.mark : (task?.isRequired ? 'ДОЛГ 😐🔫' : 'нету')}
+📈 Оценка: ${task?.mark ? Grade[task.mark] ?? task.mark : (task?.isRequired ? 'ДОЛГ 😐🔫' : task?.type === 'Home' ? 'ДЗ 😐🔫' : 'нету')}
     `
   })
 }`
@@ -164,11 +164,19 @@ function buildLessons (day: Day, isDatabase: boolean, subGroup: string | null): 
   return '\n' + (subGroup && isDatabase ? `\n☺ ${subGroup}\n\n` : '') + Object.values(lessons).map((lesson, index) => {
     if (!lesson.name) return ''
     if (![subGroup, ''].includes(lesson.name.split('/')?.[1] ?? '') && subGroup) return ''
+    // isDatabase <- временная заглушка, чтобы не показывать оценки, т.к. в базе пока что не храним их
+    const marks = isDatabase ? null : Object.values(lesson?.gradebook?.tasks ?? []).map((task) => {
+      if (task?.mark) return Grade[task?.mark]
+      if (task?.isRequired) {
+        return 'ДОЛГ 😐🔫'
+      }
+      if (task?.type === 'Home') return 'ДЗ 😐🔫'
+    }).join(',')
     return `\n${numbers[indexCounter++]} ${lesson.name}` +
            `\n⏰ ${lesson.startTime} - ${lesson.endTime}` +
            `\n🏤 Аудитория: ${lesson.timetable.classroom.name === '0' ? 'ДО 🤠' : lesson.timetable.classroom.name}` +
+           (marks ? `\n🐳 Оценки: ${marks}` : '') +
            '\n'
-           // TODO: Если дистант, нужно првоерить, есть ли ДЗ, и если есть, то уведомить об этом в отдельном поле
   }).join('') + (isDatabase ? '\n\n📌 ПОЛУЧЕНО ИЗ БАЗЫ 📌' : '') // Убирает запятые на выходе
 }
 
