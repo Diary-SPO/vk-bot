@@ -37,17 +37,19 @@ export const scheduleController = async (command: string, messageId: number, eve
 async function constructResponse (command: string, messageId: number, session: any, payload: any): Promise<Response> {
   const commandBuilder = (command: string): string => command + (messageId > -1 ? `_${messageId}` : '')
   const keyboardConstruct = Keyboard.builder().callbackButton({
-    label: '⬅️ назад',
+    label: '👈 назад',
     payload: {
       command: commandBuilder('schedule_prev'),
       currDate: session.scheduleDate
-    }
+    },
+    color: Keyboard.PRIMARY_COLOR
   }).callbackButton({
-    label: 'вперёд ➡️',
+    label: 'вперёд 👉',
     payload: {
       command: commandBuilder('schedule_next'),
       currDate: session.scheduleDate
-    }
+    },
+    color: Keyboard.PRIMARY_COLOR
   }).inline()
 
   const commands = command.split('-')
@@ -65,6 +67,7 @@ async function constructResponse (command: string, messageId: number, session: a
       const info = session.day.lessons[payload.indexLesson] as Lesson
       const themes = info.gradebook?.themes
       const teacher = info.timetable.teacher
+      // DOTO: вот тут нормально отворматировать нужно!
       return {
         message: `🤓 Предмет: ${info.name}
 👨‍💻 Преподаватель: ${[teacher?.lastName, teacher?.firstName, teacher?.middleName].join(' ')}\n
@@ -109,7 +112,8 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
       day.lessons?.forEach((lesson, index) => {
         if (!lesson.timetable) return
         if (lesson.name !== null && ![payload?.subGroup ?? currSubGroups[0], ''].includes(lesson.name.split('/')?.[1] ?? '') && (payload?.subGroup ?? currSubGroups[0])) return
-        keyboardConstruct.row().callbackButton({
+        if(indexCounter === 0 || indexCounter % 2 === 0) keyboardConstruct.row()
+        keyboardConstruct.callbackButton({
           label: `${numbers[indexCounter++]} ${lesson.name?.substring(0, lesson.name.length > 20 ? 20 : lesson.name.length) + '...'}`,
           payload: {
             command: commandBuilder('schedule_select-' + index),
@@ -132,7 +136,8 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
                 payload: {
                   command: commandBuilder('schedule_refresh'),
                   subGroup: value
-                }
+                },
+                color: Keyboard.NEGATIVE_COLOR
               })
           })
         }
