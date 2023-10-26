@@ -32,7 +32,7 @@ export const save = async (schedule: Day, diaryUser: DiaryUser): Promise<void> =
       teacherId: await getTeacherId(lesson?.timetable?.teacher, diaryUser.spoId),
       classroomBuilding: lesson.timetable.classroom.building,
       classroomName: lesson.timetable.classroom.name,
-      subjectName: lesson?.name ?? 'Не передано',
+      subjectName: lesson.name ?? '???',
       date: dateFormatted,
       startTime: lesson.startTime,
       endTime: lesson.endTime

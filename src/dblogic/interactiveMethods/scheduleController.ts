@@ -3,10 +3,8 @@ import { schedule } from '..'
 import vk from '@src/init/bot'
 import { type Lesson, type Day, Grade, LessonType } from 'diary-shared'
 import { subGroupGet } from '../subGroupGet'
-
-const numbers = ['0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟']
-const months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
-const days = ['⛱ Воскресенье', '🚀 Понедельник', '👓 Вторник', '🎭 Среда', '🎈 Четверг', '✨ Пятница', '🛵 Суббота']
+import { Months, Days, Numbers } from '@src/types'
+import { selectedDayResponse } from './scheduleController/'
 
 export const scheduleController = async (command: string, messageId: number, eventContext: MessageEventContext | MessageContext): Promise<void> => {
   const { session } = eventContext
@@ -67,23 +65,9 @@ async function constructResponse (command: string, messageId: number, session: a
       const info = session.day.lessons[payload.indexLesson] as Lesson
       const themes = info.gradebook?.themes
       const teacher = info.timetable.teacher
-      // DOTO: вот тут нормально отворматировать нужно!
+      // Готовим подробное описание пары
       return {
-        message: `🤓 Предмет: ${info.name}
-👨‍💻 Преподаватель: ${[teacher?.lastName, teacher?.firstName, teacher?.middleName].join(' ')}\n
-⏰ ${info.startTime} - ${info.endTime}
-🏫 Аудитория: ${info.timetable.classroom.name}, ст. ${info.timetable.classroom.building}\n
-🛡 Тема: ${!themes ? 'Нету' : themes[0]}\n
-${(info?.gradebook?.tasks?.length ?? 0) > 0
-? `🔔 Задания: ${
-  Object.values(info?.gradebook?.tasks ?? []).map((task, index) => {
-    return `\n${numbers[index]} Тема: ${task.topic}
-📈 Оценка: ${task?.mark ? Grade[task.mark] ?? task.mark : (task?.isRequired ? 'ДОЛГ 😐🔫' : task?.type === 'Home' ? 'ДЗ 😐🔫' : 'нету')}
-    `
-  })
-}`
-: ''}
-        `,
+        message: selectedDayResponse(info, teacher, themes),
         keyboard: keyboardConstructInfo
       }
     }
@@ -114,7 +98,7 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
         if (lesson.name !== null && ![payload?.subGroup ?? currSubGroups[0], ''].includes(lesson.name.split('/')?.[1] ?? '') && (payload?.subGroup ?? currSubGroups[0])) return
         if(indexCounter === 0 || indexCounter % 2 === 0) keyboardConstruct.row()
         keyboardConstruct.callbackButton({
-          label: `${numbers[indexCounter++]} ${lesson.name?.substring(0, lesson.name.length > 20 ? 20 : lesson.name.length) + '...'}`,
+          label: `${Numbers[indexCounter++]} ${lesson.name?.substring(0, lesson.name.length > 20 ? 20 : lesson.name.length) + '...'}`,
           payload: {
             command: commandBuilder('schedule_select-' + index),
             indexLesson: index,
@@ -124,7 +108,7 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
       })
 
       const date = new Date(session.scheduleDate)
-      const dateString = `${date.getDate().toString().padStart(2, '0')} ${months[Number(date.getMonth().toString().padStart(2, '0'))]} ${date.getFullYear()}`
+      const dateString = `${date.getDate().toString().padStart(2, '0')} ${Months[Number(date.getMonth().toString().padStart(2, '0'))]} ${date.getFullYear()}`
 
       if (isDatabase) {
         if (currSubGroups.length > 0) {
@@ -145,7 +129,7 @@ ${(info?.gradebook?.tasks?.length ?? 0) > 0
       // ВОТ ТУТ ДОДЕЛАТЬ
       return {
         // peerId: MessageContext.peerId,
-        message: '📅 Текущая дата: ' + dateString + `\n${days[date.getDay()]}` + buildLessons(day, isDatabase, payload?.subGroup ?? currSubGroups?.[0] ?? ''),
+        message: '📅 Текущая дата: ' + dateString + `\n${Days[date.getDay()]}` + buildLessons(day, isDatabase, payload?.subGroup ?? currSubGroups?.[0] ?? ''),
         keyboard: keyboardConstruct
       }
     }
@@ -174,7 +158,7 @@ function buildLessons (day: Day, isDatabase: boolean, subGroup: string | null): 
       }
       if (task?.type === 'Home') return 'ДЗ 😐🔫'
     }).join(',')
-    return `\n${numbers[indexCounter++]} ${lesson.name}` +
+    return `\n${Numbers[indexCounter++]} ${lesson.name}` +
            `\n⏰ ${lesson.startTime} - ${lesson.endTime}` +
            `\n🏤 Аудитория: ${lesson.timetable.classroom.name === '0' ? 'ДО 🤠' : lesson.timetable.classroom.name}` +
            (marks ? `\n🐳 Оценки: ${marks}` : '') +
