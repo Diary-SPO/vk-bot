@@ -4,7 +4,7 @@ import vk from '@src/init/bot'
 import { type Lesson, type Day } from 'diary-shared'
 import { subGroupGet } from '../subGroupGet'
 import { Months, Days, Numbers } from '@src/types'
-import { listScheduleResponse, selectedDayResponse } from './scheduleController/'
+import { listScheduleResponse, selectedDayResponse } from './scheduleControllerFuncs'
 
 export const scheduleController = async (command: string, messageId: number, eventContext: MessageEventContext | MessageContext): Promise<void> => {
   const { session } = eventContext
