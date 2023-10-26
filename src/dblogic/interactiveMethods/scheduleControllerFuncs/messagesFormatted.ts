@@ -9,10 +9,10 @@ export const selectedDayResponse = (info: Lesson, teacher: Teacher | undefined, 
         `🛡 Тема: ${!themes ? 'Нету' : themes[0]}\n\n` +
     `${(info?.gradebook?.tasks?.length ?? 0) > 0
     ? `🔔 Задания: ${
-      Object.values(info?.gradebook?.tasks ?? []).map((task, index) => {
+      Object.values(info?.gradebook?.tasks ?? []).map((task, index): string => {
         return `\n${Numbers[index]} Тема: ${task.topic}\n` +
              `📈 Оценка: ${task?.mark ? Grade[task.mark] ?? task.mark : (task?.isRequired ? 'ДОЛГ 😐🔫' : task?.type === 'Home' ? 'ДЗ 😐🔫' : 'нету')}\n`
-      })}`
+      }).join('')}`
     : ''}\n`
 }
 
@@ -26,13 +26,14 @@ export const listScheduleResponse = (subGroup: string | null, isDatabase: boolea
     let counterMarks = 0
     const marks = isDatabase
       ? null
-      : Object.values(lesson?.gradebook?.tasks ?? []).map((task) => {
+      : Object.values(lesson?.gradebook?.tasks ?? []).map((task): string | number | undefined => {
         counterMarks++
         if (task?.mark) return Grade[task?.mark]
         if (task?.isRequired) {
           return 'ДОЛГ 😐🔫'
         }
         if (task?.type === 'Home') return 'ДЗ 😐🔫'
+        return ''
       }).join(',')
 
     // Вот тут уже подставляем данные на вынос

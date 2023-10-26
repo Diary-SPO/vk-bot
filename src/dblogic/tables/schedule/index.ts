@@ -7,7 +7,7 @@ import { createQueryBuilder } from '@src/dblogic/sql'
 
 const getScheduleFromDatabase = async (diaryUser: DiaryUser, date: Date): Promise<Day | null> => { // Возвращает расписание чисто из БД
   // TODO: Написать запрос для извлечения данных из БД одним запросом в формате json
-  const databaseSchedule = await createQueryBuilder<{ json: Day }>().customQueryRun(/*sql*/ `
+  const databaseSchedule = await createQueryBuilder<{ json: Day }>().customQueryRun(/* sql */ `
   WITH query_data (diaryUserId, dateSchedule) as (
     values (${diaryUser.id}, '${new Date(date).toJSON().split('T')[0]}')
     )
@@ -79,7 +79,9 @@ const getScheduleFromNetworkCity = async (diaryUser: DiaryUser, date: Date, cook
   // Заносим актуальное расписание в БД
 
   // Не await, т.к. не нужно задерживать пользователя
-  save(scheduleActual, diaryUser)
+  save(scheduleActual, diaryUser).catch(e => {
+    console.log('Error save schedule: ' + e)
+  })
 
   return scheduleActual
 }

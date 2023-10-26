@@ -70,7 +70,7 @@ const gradebookSave = async (gb: Gradebook, sc: Schedule, diaryUserId: number): 
       // Удаляем старые записи (темы)
       for (let i = 0; i < existingThemes.length; i++) {
         themeQueryBuilder
-          .where(`description = '${existingThemes[i]}' and "gradebookId" = '${actualGradebook.id}'`)
+          .where(`description = '${existingThemes[i].description}' and "gradebookId" = '${actualGradebook.id}'`)
           .delete()
           .catch((err) => { console.log(`Error delete theme: ${err}`) })
       }
