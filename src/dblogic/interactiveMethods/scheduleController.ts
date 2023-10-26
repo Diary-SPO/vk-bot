@@ -29,10 +29,7 @@ export const scheduleController = async (command: string, messageId: number, eve
       ...scheduleFirst
     })
     if (eventContext?.eventId) {
-      await eventContext.answer({
-        text: 'Загружено 😃',
-        type: 'show_snackbar'
-      })
+      await eventContext.answer()
     }
   }
 }
