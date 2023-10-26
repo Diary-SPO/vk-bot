@@ -1,10 +1,10 @@
 import { Keyboard, type MessageContext, type MessageEventContext } from 'vk-io'
 import { schedule } from '..'
 import vk from '@src/init/bot'
-import { type Lesson, type Day, Grade, LessonType } from 'diary-shared'
+import { type Lesson, type Day } from 'diary-shared'
 import { subGroupGet } from '../subGroupGet'
 import { Months, Days, Numbers } from '@src/types'
-import { selectedDayResponse } from './scheduleController/'
+import { listScheduleResponse, selectedDayResponse } from './scheduleController/'
 
 export const scheduleController = async (command: string, messageId: number, eventContext: MessageEventContext | MessageContext): Promise<void> => {
   const { session } = eventContext
@@ -32,6 +32,7 @@ export const scheduleController = async (command: string, messageId: number, eve
   }
 }
 
+// Обработчик command из payload
 async function constructResponse (command: string, messageId: number, session: any, payload: any): Promise<Response> {
   const commandBuilder = (command: string): string => command + (messageId > -1 ? `_${messageId}` : '')
   const keyboardConstruct = Keyboard.builder().callbackButton({
@@ -96,7 +97,7 @@ async function constructResponse (command: string, messageId: number, session: a
       day.lessons?.forEach((lesson, index) => {
         if (!lesson.timetable) return
         if (lesson.name !== null && ![payload?.subGroup ?? currSubGroups[0], ''].includes(lesson.name.split('/')?.[1] ?? '') && (payload?.subGroup ?? currSubGroups[0])) return
-        if(indexCounter === 0 || indexCounter % 2 === 0) keyboardConstruct.row()
+        if (indexCounter === 0 || indexCounter % 2 === 0) keyboardConstruct.row()
         keyboardConstruct.callbackButton({
           label: `${Numbers[indexCounter++]} ${lesson.name?.substring(0, lesson.name.length > 20 ? 20 : lesson.name.length) + '...'}`,
           payload: {
@@ -136,6 +137,7 @@ async function constructResponse (command: string, messageId: number, session: a
   }
 }
 
+// Возвращает текст для "листалки" в расписании
 function buildLessons (day: Day, isDatabase: boolean, subGroup: string | null): string {
   const lessons = day.lessons
   console.log(day)
@@ -146,24 +148,7 @@ function buildLessons (day: Day, isDatabase: boolean, subGroup: string | null): 
     }
     return '\n\n🎉 Занятий нет 🎉'
   }
-  let indexCounter = 0
-  return '\n' + (subGroup && isDatabase ? `\n☺ ${subGroup}\n\n` : '') + Object.values(lessons).map((lesson, index) => {
-    if (!lesson.name) return ''
-    if (![subGroup, ''].includes(lesson.name.split('/')?.[1] ?? '') && subGroup) return ''
-    // isDatabase <- временная заглушка, чтобы не показывать оценки, т.к. в базе пока что не храним их
-    const marks = isDatabase ? null : Object.values(lesson?.gradebook?.tasks ?? []).map((task) => {
-      if (task?.mark) return Grade[task?.mark]
-      if (task?.isRequired) {
-        return 'ДОЛГ 😐🔫'
-      }
-      if (task?.type === 'Home') return 'ДЗ 😐🔫'
-    }).join(',')
-    return `\n${Numbers[indexCounter++]} ${lesson.name}` +
-           `\n⏰ ${lesson.startTime} - ${lesson.endTime}` +
-           `\n🏤 Аудитория: ${lesson.timetable.classroom.name === '0' ? 'ДО 🤠' : lesson.timetable.classroom.name}` +
-           (marks ? `\n🐳 Оценки: ${marks}` : '') +
-           '\n'
-  }).join('') + (isDatabase ? '\n\n📌 ПОЛУЧЕНО ИЗ БАЗЫ 📌' : '') // Убирает запятые на выходе
+  return listScheduleResponse(subGroup, isDatabase, lessons)
 }
 
 interface Response {
