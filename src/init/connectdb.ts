@@ -5,7 +5,7 @@ const client = new Client({
   host: DATABASE_HOST,
   port: Number(DATABASE_PORT),
   database: DATABASE_NAME,
-  username: DATABASE_USERNAME,
+  user: DATABASE_USERNAME,
   password: DATABASE_PASSWORD
 })
 

@@ -1,53 +1,41 @@
+import { type Teacher } from 'diary-shared'
 export interface DiaryUser {
   id: number
-  spoid?: number
-  groupid: number
+  spoId?: number
+  groupId: number
   login: string
   password: string
   phone: string
   birthday: string
-  firstname: string
-  lastname: string
-  middlename: string
+  firstName: string
+  lastName: string
+  middleName: string
   cookie: string
 }
 
 export interface Group {
   id?: number
-  groupname: string
-  diarygroupid: number
-  spoid?: number
+  groupName: string
+  diaryGroupId: number
+  spoId?: number
 }
 
 export interface SPO {
   id?: number
   abbreviation: string
   name: string
-  shortname: string
-  actualaddress: string
+  shortName: string
+  actualAddress: string
   email: string
   site: string
   phone: string
   type: string
-  directorname: string
+  directorName: string
 }
 
 export interface VKUser {
-  diaryid: number
-  vkid: number
-}
-
-export interface Person {
-  id: number // id профиля
-  groupId: number // id группы
-  login: string // Логин
-  password: string // Пароль
-  phone: string // Номер телефона
-  birthday: string // Дата рождения
-  firstName: string // Имя
-  lastName: string // Фамилия
-  middleName: string // Отчество,
-  cookie: string
+  diaryId: number
+  vkId: number
 }
 
 export interface PersonResponse {
@@ -62,4 +50,50 @@ export interface PersonResponse {
     phone: string
     trusted: boolean
   }
+}
+
+export interface Schedule {
+  id?: number
+  groupId?: number
+  teacherId: number | null
+  classroomBuilding: string | null
+  classroomName: string | null
+  subjectName: string
+  date: string
+  startTime: string
+  endTime: string
+}
+
+export interface TeacherDB extends Teacher {
+  spoId: number
+}
+
+export interface GradebookDB {
+  id?: number
+  scheduleId: number
+  lessonTypeId: number
+}
+
+export interface LessonTypeDB {
+  id?: number
+  name: string
+}
+
+export interface ThemeDB {
+  id?: number
+  gradebookId: number
+  description: string
+}
+
+export interface TaskDB {
+  id: number
+  gradebookId: number
+  taskTypeId: number
+  topic: string
+}
+
+export interface RequiredDB {
+  diaryUserId: number
+  taskId: number
+  isRequired: boolean
 }

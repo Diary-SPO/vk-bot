@@ -1,12 +1,12 @@
-import { createQueryBuilder } from './sql/query'
+import { createQueryBuilder } from './sql'
 
-export default async (vkId: number): Promise<void> => {
+export const logout = async (vkId: number): Promise<void> => {
   try {
     const userVKQueryBuilder = createQueryBuilder()
 
     await userVKQueryBuilder
-      .from('VKUser')
-      .where(`vkid = ${vkId}`)
+      .from('vkUser')
+      .where(`"vkId" = ${vkId}`)
       .delete()
   } catch (error) {
     console.error('Ошибка при удалении записи:', error)

@@ -1,10 +1,8 @@
 import { type StepScene } from '@vk-io/scenes'
-import auth from '@src/scenes/login'
-import home from '@src/scenes/home'
-import settings from '@src/scenes/settings'
+import { login, home, settings } from '@src/scenes'
 
 const scenes: StepScene[] = [
-  auth,
+  login,
   home,
   settings
 ]

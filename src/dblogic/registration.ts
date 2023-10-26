@@ -1,15 +1,15 @@
 import { type DiaryUser, type VKUser, type SPO, type Group, type PersonResponse } from '@types'
-import { createQueryBuilder } from '@src/dblogic/sql/query'
-import crypto from '@src/dblogic/crypto'
+import { createQueryBuilder } from './sql'
+import crypto from './crypto'
 import fetcher from '@src/api/fetcher'
 import Hashes from 'jshashes'
 import { type UserData } from 'diary-shared'
 import { SERVER_URL } from '@config'
 
-async function loginUser (login: string, password: string, vkid: number): Promise<DiaryUser | number> {
+export const registration = async (login: string, password: string, vkId: number): Promise<DiaryUser | number> => {
   const passwordHashed = new Hashes.SHA256().b64(password)
   const res = await fetcher<UserData>({
-    url: `${SERVER_URL}/login`,
+    url: `${SERVER_URL}/security/login`,
     method: 'POST',
     body: JSON.stringify({ login, password: passwordHashed, isRemember: true })
   })
@@ -24,7 +24,7 @@ async function loginUser (login: string, password: string, vkid: number): Promis
     const cookie = Array.isArray(setCookieHeader) ? setCookieHeader.join('; ') : setCookieHeader
 
     const detailedInfo = await fetcher<PersonResponse>({
-      url: `${SERVER_URL}/account-settings`,
+      url: `${SERVER_URL}/security/account-settings`,
       cookie: cookie ?? ''
     })
 
@@ -32,32 +32,32 @@ async function loginUser (login: string, password: string, vkid: number): Promis
 
     const regData: DiaryUser = {
       id: student.id,
-      groupid: student.groupId,
+      groupId: student.groupId,
       login,
       password: crypto.encrypt(password ?? ''),
       phone: detailedInfo.data.person.phone,
       birthday: detailedInfo.data.person.birthday,
-      firstname: detailedInfo.data.person.firstName,
-      lastname: detailedInfo.data.person.lastName,
-      middlename: detailedInfo.data.person.middleName,
+      firstName: detailedInfo.data.person.firstName,
+      lastName: detailedInfo.data.person.lastName,
+      middleName: detailedInfo.data.person.middleName,
       cookie: crypto.encrypt(cookie ?? '')
     }
 
     const regSPO: SPO = {
       abbreviation: SPO.abbreviation,
       name: SPO.name,
-      shortname: SPO.shortName,
-      actualaddress: SPO.actualAddress,
+      shortName: SPO.shortName,
+      actualAddress: SPO.actualAddress,
       email: SPO.email,
       site: SPO.site,
       phone: SPO.phone,
       type: SPO.type,
-      directorname: SPO.directorName
+      directorName: SPO.directorName
     }
 
     const regGroup: Group = {
-      groupname: student.groupName,
-      diarygroupid: student.groupId
+      groupName: student.groupName,
+      diaryGroupId: student.groupId
     }
 
     const groupQueryBuilder = createQueryBuilder<Group>()
@@ -65,12 +65,11 @@ async function loginUser (login: string, password: string, vkid: number): Promis
     const userVKQueryBuilder = createQueryBuilder<VKUser>()
     const SPOQueryBuilder = createQueryBuilder<SPO>()
 
-    const existingGroup = await groupQueryBuilder.from('groups').select('*').where(`diarygroupid = ${regGroup.diarygroupid}`).first()
+    const existingGroup = await groupQueryBuilder.from('groups').select('*').where(`"diaryGroupId" = ${regGroup.diaryGroupId}`).first()
     const existingDiaryUser = await userDiaryQueryBuilder.from('diaryUser').select('*').where(`id = ${regData.id}`).first()
-    const existingVKUser = await userVKQueryBuilder.from('VKUser').select('*').where(`vkid = ${vkid}`).first()
-    const existingSPO = await SPOQueryBuilder.from('spo').select('*').where(`name = '${regSPO.name}'`).first()
+    const existingVKUser = await userVKQueryBuilder.from('vkUser').select('*').where(`"vkId" = ${vkId}`).first()
+    const existingSPO = await SPOQueryBuilder.from('SPO').select('*').where(`abbreviation = '${regSPO.abbreviation}'`).first()
 
-    // Здесь в итоге, после обновления или вставке, будут актуальные данные
     const actualSPO: SPO = regSPO
     const actualGroup: Group = regGroup
 
@@ -82,12 +81,11 @@ async function loginUser (login: string, password: string, vkid: number): Promis
       await SPOQueryBuilder.update(regSPO)
       actualSPO.id = existingSPO.id
     }
-    regGroup.spoid = actualSPO.id
-    regData.spoid = actualSPO.id
+    regGroup.spoId = actualSPO.id
+    regData.spoId = actualSPO.id
 
     if (!existingGroup) {
       const res = await groupQueryBuilder.insert(regGroup)
-      console.log(res)
       if (!res) throw new Error('Error insert group')
       actualGroup.id = res.id
     } else {
@@ -96,7 +94,7 @@ async function loginUser (login: string, password: string, vkid: number): Promis
     }
 
     // Если всё ок, вносим id группы в пользователя
-    regData.groupid = actualGroup.id ?? -1 // <- ???
+    regData.groupId = actualGroup.id ?? -1 // <- ???
 
     // Дальше всё как обычно
     if (!existingDiaryUser) {
@@ -106,10 +104,12 @@ async function loginUser (login: string, password: string, vkid: number): Promis
     }
 
     if (!existingVKUser) {
-      await userVKQueryBuilder.insert({ diaryid: regData.id, vkid })
+      await userVKQueryBuilder.insert({ diaryId: regData.id, vkId })
     } else {
-      await userVKQueryBuilder.update({ diaryid: regData.id, vkid })
+      await userVKQueryBuilder.update({ diaryId: regData.id, vkId })
     }
+
+    regData.cookie = crypto.decrypt(regData.cookie)
 
     return regData
   } catch (error) {
@@ -120,5 +120,3 @@ async function loginUser (login: string, password: string, vkid: number): Promis
   // 501 - сервер упал.
   // 1   - неизвестная ошибка
 }
-
-export default loginUser
