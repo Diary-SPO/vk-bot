@@ -2,10 +2,12 @@ import { StepScene } from '@vk-io/scenes'
 import { Keyboard, type MessageContext } from 'vk-io'
 import { type DiaryUser } from '@types'
 import { interactiveEvents } from '../interactive'
+import { marks } from '@src/dblogic/marks'
 
 export default new StepScene('home', [
   async (context: MessageContext) => {
     const { session } = context
+    const user = session.diaryUser as DiaryUser
     if ((context.scene.step.firstTime || !context.text) && !context?.messagePayload?.command) {
       await context.send('Приветики! Ты в главном меню!')
     }
@@ -13,7 +15,6 @@ export default new StepScene('home', [
     switch (context?.messagePayload?.command) {
       case 'settings': return context.scene.enter('settings')
       case 'profile': {
-        const user = session.diaryUser as DiaryUser
         const date = new Date(user.birthday)
         await context.send(
           `👤 ${user.lastName} ${user.firstName} ${user.middleName}` +
@@ -28,7 +29,7 @@ export default new StepScene('home', [
         session.scheduleDate = new Date() // Говорим, что нам нужна текущая дата
         await interactiveEvents(context, () => {}, ['schedule', 'refresh', `${messageId}`]); return
       }
-      case 'marks': await context.send('Скоро будет...'); break
+      case 'marks': return context.scene.enter('marks')
       case 'more': await context.send('Скоро будет...'); break
     }
 

@@ -97,3 +97,8 @@ export interface RequiredDB {
   taskId: number
   isRequired: boolean
 }
+
+export interface SubjectMarks {
+  subjectName: string,
+  marks: string[]
+}
